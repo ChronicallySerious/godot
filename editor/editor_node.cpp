@@ -2316,7 +2316,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		} break;
 		case RUN_VCS_SETTINGS: {
 
-			project_settings->popup_project_settings();
+			vcs_settings->popup_vcs_settings();
 		} break;
 		case FILE_INSTALL_ANDROID_SOURCE: {
 
@@ -5844,6 +5844,9 @@ EditorNode::EditorNode() {
 
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
+
+	vcs_settings = memnew(VCSSettingsEditor);
+	gui_base->add_child(vcs_settings);
 
 	run_settings_dialog = memnew(RunSettingsDialog);
 	gui_base->add_child(run_settings_dialog);
