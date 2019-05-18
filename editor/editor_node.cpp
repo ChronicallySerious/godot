@@ -2314,6 +2314,10 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 
 			project_settings->popup_project_settings();
 		} break;
+		case RUN_VCS_SETTINGS: {
+
+			project_settings->popup_project_settings();
+		} break;
 		case FILE_INSTALL_ANDROID_SOURCE: {
 
 			if (p_confirmed) {
@@ -5922,6 +5926,9 @@ EditorNode::EditorNode() {
 	plugin_config_dialog = memnew(PluginConfigDialog);
 	plugin_config_dialog->connect("plugin_ready", this, "_on_plugin_ready");
 	gui_base->add_child(plugin_config_dialog);
+
+	p->add_separator();
+	p->add_shortcut(ED_SHORTCUT("editor/vcs_settings", TTR("Version Control Settings")), RUN_VCS_SETTINGS);
 
 	tool_menu = memnew(PopupMenu);
 	tool_menu->set_name("Tools");
