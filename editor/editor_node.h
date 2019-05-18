@@ -62,7 +62,7 @@
 #include "editor/progress_dialog.h"
 #include "editor/project_export.h"
 #include "editor/project_settings_editor.h"
-#include "editor/version_control_settings_editor.h"
+#include "editor/vcs_settings_editor.h"
 #include "editor/property_editor.h"
 #include "editor/quick_open.h"
 #include "editor/reparent_dialog.h"
@@ -328,7 +328,7 @@ private:
 	EditorSettingsDialog *settings_config_dialog;
 	RunSettingsDialog *run_settings_dialog;
 	ProjectSettingsEditor *project_settings;
-	VersionControlSettingsEditor *vcs_settings;
+	VCSSettingsEditor *vcs_settings;
 	EditorFileDialog *file;
 	ExportTemplateManager *export_template_manager;
 	EditorFeatureProfileManager *feature_profile_manager;
@@ -695,6 +695,7 @@ public:
 	ScriptCreateDialog *get_script_create_dialog() { return scene_tree_dock->get_script_create_dialog(); }
 
 	ProjectSettingsEditor *get_project_settings() { return project_settings; }
+	VCSSettingsEditor *get_vcs_project_settings() { return vcs_settings; }
 
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
