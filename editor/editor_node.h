@@ -62,6 +62,7 @@
 #include "editor/progress_dialog.h"
 #include "editor/project_export.h"
 #include "editor/project_settings_editor.h"
+#include "editor/version_control_settings_editor.h"
 #include "editor/property_editor.h"
 #include "editor/quick_open.h"
 #include "editor/reparent_dialog.h"
@@ -181,6 +182,7 @@ private:
 		RUN_DEBUG_NAVIGATION,
 		RUN_DEPLOY_REMOTE_DEBUG,
 		RUN_RELOAD_SCRIPTS,
+		RUN_VCS_SETTINGS,
 		SETTINGS_UPDATE_ALWAYS,
 		SETTINGS_UPDATE_CHANGES,
 		SETTINGS_UPDATE_SPINNER_HIDE,
@@ -266,6 +268,7 @@ private:
 	MenuButton *debug_menu;
 	MenuButton *settings_menu;
 	MenuButton *help_menu;
+	PopupMenu *vcs_menu;
 	PopupMenu *tool_menu;
 	ToolButton *export_button;
 	ToolButton *prev_scene;
@@ -316,6 +319,7 @@ private:
 	EditorSettingsDialog *settings_config_dialog;
 	RunSettingsDialog *run_settings_dialog;
 	ProjectSettingsEditor *project_settings;
+	VersionControlSettingsEditor *vcs_settings;
 	EditorFileDialog *file;
 	ExportTemplateManager *export_template_manager;
 	EditorFeatureProfileManager *feature_profile_manager;
