@@ -2,14 +2,15 @@
 #define VERSION_CONTROL_SETTINGS_EDITOR_H
 
 #include "scene/gui/dialogs.h"
+#include "editor_settings.h"
+
+enum VCSName {
+	Git
+};
 
 class VCSSettingsEditor : public AcceptDialog {
 
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
-
-	enum class VCSName {
-		GIT
-	};
 
 	VCSName current_vcs_name;
 
@@ -19,6 +20,8 @@ class VCSSettingsEditor : public AcceptDialog {
 	static void _bind_methods();
 
 	public:
+	void popup_vcs_settings();
+
 	VCSName get_vcs_type() { return current_vcs_name; }
 };
 

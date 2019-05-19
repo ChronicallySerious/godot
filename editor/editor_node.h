@@ -695,7 +695,7 @@ public:
 	ScriptCreateDialog *get_script_create_dialog() { return scene_tree_dock->get_script_create_dialog(); }
 
 	ProjectSettingsEditor *get_project_settings() { return project_settings; }
-	VCSSettingsEditor *get_vcs_project_settings() { return vcs_settings; }
+	VCSSettingsEditor *get_vcs_settings() { return vcs_settings; }
 
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
