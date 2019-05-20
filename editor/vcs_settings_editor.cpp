@@ -1,16 +1,15 @@
 #include "vcs_settings_editor.h"
 
-void VCSSettingsEditor::_vcs_select(VCSName p_vcs_name) {
+void VCSSettingsEditor::_initialise_vcs_plugin(String p_vcs_name) {
 
-	Variant vcs_name = Variant(p_vcs_name);
 	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
 
+	
 }
 
 void VCSSettingsEditor::_bind_methods() {
 
-	ClassDB::bind_method("_vcs_select", &VCSSettingsEditor::_vcs_select);
-
+	ClassDB::bind_method(D_METHOD("_initialise_vcs_plugin"), &VCSSettingsEditor::_initialise_vcs_plugin);
 }
 
 void VCSSettingsEditor::popup_vcs_settings() {
