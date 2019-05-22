@@ -25,3 +25,11 @@ void VCSSettingsEditor::popup_vcs_settings() {
 float VCSSettingsEditor::editor_get_scale() {
 	return scale;
 }
+
+VCSSettingsEditor::VCSSettingsEditor() {
+	set_title(TTR("VCS Settings (project.godot)"));
+	set_resizable(true);
+}
+
+VCSSettingsEditor::~VCSSettingsEditor() {
+}
