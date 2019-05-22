@@ -3,23 +3,21 @@
 
 #include "core/array.h"
 #include "scene/gui/dialogs.h"
-#include "editor_settings.h"
 
 class VCSSettingsEditor : public AcceptDialog {
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
 
-	Array available_vcs_plugins_names;
-	String selected_vcs;
+	String vcs_name;
+
+	static float scale;
 
 	static void _initialise_vcs_plugin(String p_vcs_name);
-
-	protected:
-	static void _bind_methods();
 
 	public:
 	void popup_vcs_settings();
 
-	String get_vcs_type() { return selected_vcs; }
+	float editor_get_scale();
+	String get_vcs_name() { return vcs_name; }
 };
 
 #endif
