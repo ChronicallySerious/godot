@@ -1,23 +1,27 @@
+#include "editor_settings.h"
 #include "vcs_settings_editor.h"
+
+float VCSSettingsEditor::scale;
 
 void VCSSettingsEditor::_initialise_vcs_plugin(String p_vcs_name) {
 
 	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
-
-	
-}
-
-void VCSSettingsEditor::_bind_methods() {
-
-	ClassDB::bind_method(D_METHOD("_initialise_vcs_plugin"), &VCSSettingsEditor::_initialise_vcs_plugin);
+	scale = 2.0f;
 }
 
 void VCSSettingsEditor::popup_vcs_settings() {
 
-	Rect2 saved_size = EditorSettings::get_singleton()->get_project_metadata("dialog_bounds", "vcs_settings", Rect2());
+	Size2 popup_size = Size2(900, 700) * editor_get_scale();
+	Size2 window_size = get_viewport_rect().size;
+
+	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
+	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
+
+	popup_centered(popup_size);
+
 	
-	if (saved_size != Rect2())
-	{
-		popup(saved_size);
-	}
+}
+
+float VCSSettingsEditor::editor_get_scale() {
+	return scale;
 }
