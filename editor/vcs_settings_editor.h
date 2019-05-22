@@ -18,6 +18,9 @@ class VCSSettingsEditor : public AcceptDialog {
 
 	float editor_get_scale();
 	String get_vcs_name() { return vcs_name; }
+
+	VCSSettingsEditor();
+	~VCSSettingsEditor();
 };
 
 #endif
