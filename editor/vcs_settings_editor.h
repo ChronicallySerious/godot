@@ -9,18 +9,20 @@ class VCSSettingsEditor : public AcceptDialog {
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
 
 	String vcs_name;
+	bool is_vcs_intialised;
+	Array available_vcs;
 	EditorData *data;
 
-	OptionButton *label;
-
-	static float scale;
+	Label *vcs_name_label;
+	OptionButton *vcs_choice_drop_down;
+	Button *initialise_button;
 
 	static void _initialise_vcs_plugin(String p_vcs_name);
+	void _initialise_vcs();
 
-	public:
+public:
 	void popup_vcs_settings();
 
-	float editor_get_scale();
 	String get_vcs_name() { return vcs_name; }
 
 	VCSSettingsEditor(EditorData *p_data);
