@@ -16,19 +16,31 @@ void VCSSettingsEditor::popup_vcs_settings() {
 
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
-
-	popup_centered(popup_size);
-
 	
+	popup_centered(popup_size);
 }
 
 float VCSSettingsEditor::editor_get_scale() {
 	return scale;
 }
 
-VCSSettingsEditor::VCSSettingsEditor() {
+VCSSettingsEditor::VCSSettingsEditor(EditorData *p_data) {
 	set_title(TTR("VCS Settings (project.godot)"));
 	set_resizable(true);
+	data = p_data;
+
+	VBoxContainer *vbc = memnew(VBoxContainer);
+	vbc->set_alignment(BoxContainer::ALIGN_BEGIN);
+	vbc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	add_child(vbc);
+
+	HBoxContainer *hbc = memnew(HBoxContainer);
+	hbc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	vbc->add_child(hbc);
+
+	label = memnew(OptionButton);
+	label->set_text(TTR("Version Control Setting"));
+	vbc->add_child(label);
 }
 
 VCSSettingsEditor::~VCSSettingsEditor() {

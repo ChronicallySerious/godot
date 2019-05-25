@@ -5845,7 +5845,7 @@ EditorNode::EditorNode() {
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
 
-	vcs_settings = memnew(VCSSettingsEditor);
+	vcs_settings = memnew(VCSSettingsEditor(&editor_data));
 	gui_base->add_child(vcs_settings);
 
 	run_settings_dialog = memnew(RunSettingsDialog);

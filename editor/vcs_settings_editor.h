@@ -2,12 +2,16 @@
 #define VERSION_CONTROL_SETTINGS_EDITOR_H
 
 #include "core/array.h"
+#include "editor/editor_data.h"
 #include "scene/gui/dialogs.h"
 
 class VCSSettingsEditor : public AcceptDialog {
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
 
 	String vcs_name;
+	EditorData *data;
+
+	OptionButton *label;
 
 	static float scale;
 
@@ -19,7 +23,7 @@ class VCSSettingsEditor : public AcceptDialog {
 	float editor_get_scale();
 	String get_vcs_name() { return vcs_name; }
 
-	VCSSettingsEditor();
+	VCSSettingsEditor(EditorData *p_data);
 	~VCSSettingsEditor();
 };
 
