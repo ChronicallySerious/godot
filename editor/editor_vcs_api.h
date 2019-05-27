@@ -9,12 +9,17 @@ class EditorVCSAPI {
 private:
 	String vcs_name;
 
+	static void register_to_editor(String vcs_name);
+
 	String _get_vcs_name();
-	String _display_commit_dock();
+	String _get_commit_dock();
 
 public:
-	void display_commit_dock();
-	void get_vcs_name();
+	void get_commit_dock();
+	String get_vcs_name();
+
+	EditorVCSAPI(String p_vcs_name);
+	virtual ~EditorVCSAPI();
 };
 
 #endif
