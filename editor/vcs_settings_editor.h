@@ -17,8 +17,11 @@ class VCSSettingsEditor : public AcceptDialog {
 	OptionButton *vcs_choice_drop_down;
 	Button *initialise_button;
 
+	static void _bind_methods();
 	static void _initialise_vcs_plugin(String p_vcs_name);
+
 	void _initialise_vcs();
+	void _selected_a_vcs();
 
 public:
 	void popup_vcs_settings();
