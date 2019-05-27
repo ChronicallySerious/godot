@@ -1,13 +1,33 @@
 #include "vcs_settings_editor.h"
 #include "editor_settings.h"
 
+void VCSSettingsEditor::_bind_methods() {
+
+	ClassDB::bind_method(D_METHOD("_initialise_vcs"), &VCSSettingsEditor::_initialise_vcs);
+	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &VCSSettingsEditor::_selected_a_vcs);
+
+	ClassDB::bind_method(D_METHOD("popup_vcs_settings"), &VCSSettingsEditor::popup_vcs_settings);
+	ClassDB::bind_method(D_METHOD("get_vcs_name"), &VCSSettingsEditor::get_vcs_name);
+}
+
 void VCSSettingsEditor::_initialise_vcs_plugin(String p_vcs_name) {
 
 	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
 }
 
 void VCSSettingsEditor::_initialise_vcs() {
-	initialise_button->set_text("aha");
+
+	vcs_name = vcs_choice_drop_down->get_text();
+	initialise_button->set_text(vcs_name);
+}
+
+void VCSSettingsEditor::_selected_a_vcs() {
+
+	if (available_vcs.find(vcs_name) != -1) {
+		initialise_button->set_disabled(false);
+	} else {
+		initialise_button->set_disabled(true);
+	}
 }
 
 void VCSSettingsEditor::popup_vcs_settings() {
@@ -19,6 +39,7 @@ void VCSSettingsEditor::popup_vcs_settings() {
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
 
 	vcs_name = EditorSettings::get_singleton()->get_project_metadata("vcs", "name", "");
+
 	if (is_vcs_intialised) {
 		initialise_button->set_disabled(true);
 	}
@@ -27,6 +48,7 @@ void VCSSettingsEditor::popup_vcs_settings() {
 }
 
 VCSSettingsEditor::VCSSettingsEditor(EditorData *p_data) {
+
 	set_title(TTR("VCS Settings"));
 	set_resizable(true);
 	data = p_data;
@@ -50,9 +72,11 @@ VCSSettingsEditor::VCSSettingsEditor(EditorData *p_data) {
 	for (int i = 0; i < available_vcs.size(); i++) {
 		vcs_choice_drop_down->add_item(available_vcs[i]);
 	}
+	vcs_choice_drop_down->connect("pressed", this, "_selected_a_vcs");
 	hbc->add_child(vcs_choice_drop_down);
 
 	initialise_button = memnew(Button(TTR("Initialise VCS")));
+	initialise_button->set_disabled(true);
 	initialise_button->connect("pressed", this, "_initialise_vcs");
 	vbc->add_child(initialise_button);
 }
