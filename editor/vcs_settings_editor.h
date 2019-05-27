@@ -4,13 +4,14 @@
 #include "core/array.h"
 #include "editor/editor_data.h"
 #include "scene/gui/dialogs.h"
+#include "editor/editor_vcs_api.h"
 
 class VCSSettingsEditor : public AcceptDialog {
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
 
 	String vcs_name;
 	bool is_vcs_intialised;
-	Array available_vcs;
+	static Array available_vcs;
 	EditorData *data;
 
 	Label *vcs_name_label;
@@ -18,10 +19,12 @@ class VCSSettingsEditor : public AcceptDialog {
 	Button *initialise_button;
 
 	static void _bind_methods();
-	static void _initialise_vcs_plugin(String p_vcs_name);
+	static void register_vcs_plugin(String p_vcs_name);
 
-	void _initialise_vcs();
+	void _initialise_vcs(String p_vcs_name);
 	void _selected_a_vcs();
+
+	friend class EditorVCSAPI;
 
 public:
 	void popup_vcs_settings();
