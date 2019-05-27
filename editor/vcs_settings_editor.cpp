@@ -1,6 +1,8 @@
 #include "vcs_settings_editor.h"
 #include "editor_settings.h"
 
+Array VCSSettingsEditor::available_vcs;
+
 void VCSSettingsEditor::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_initialise_vcs"), &VCSSettingsEditor::_initialise_vcs);
@@ -10,15 +12,17 @@ void VCSSettingsEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_vcs_name"), &VCSSettingsEditor::get_vcs_name);
 }
 
-void VCSSettingsEditor::_initialise_vcs_plugin(String p_vcs_name) {
+void VCSSettingsEditor::register_vcs_plugin(String p_vcs_name) {
 
-	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
+	if (available_vcs.find(p_vcs_name) != -1) {
+		available_vcs.append(p_vcs_name);
+	}
 }
 
-void VCSSettingsEditor::_initialise_vcs() {
+void VCSSettingsEditor::_initialise_vcs(String p_vcs_name) {
 
+	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
 	vcs_name = vcs_choice_drop_down->get_text();
-	initialise_button->set_text(vcs_name);
 }
 
 void VCSSettingsEditor::_selected_a_vcs() {
