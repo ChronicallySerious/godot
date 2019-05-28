@@ -50,6 +50,7 @@
 #include "editor/editor_run_script.h"
 #include "editor/editor_scale.h"
 #include "editor/editor_sub_scene.h"
+#include "editor/editor_version_control.h"
 #include "editor/export_template_manager.h"
 #include "editor/fileserver/editor_file_server.h"
 #include "editor/filesystem_dock.h"
@@ -348,6 +349,7 @@ private:
 	Node *_last_instanced_scene;
 
 	EditorLog *log;
+	EditorVersionControl *version_control;
 	CenterContainer *tabs_center;
 	EditorQuickOpen *quick_open;
 	EditorQuickOpen *quick_run;

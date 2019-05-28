@@ -19,7 +19,7 @@ class VCSSettingsEditor : public AcceptDialog {
 	Button *initialise_button;
 
 	static void _bind_methods();
-	static void register_vcs_plugin(String p_vcs_name);
+	static void _register_vcs_plugin(String p_vcs_name);
 
 	void _initialise_vcs(String p_vcs_name);
 	void _selected_a_vcs();
