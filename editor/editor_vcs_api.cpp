@@ -2,7 +2,7 @@
 #include "vcs_settings_editor.h"
 
 void EditorVCSAPI::register_to_editor(String p_name) {
-	VCSSettingsEditor::register_vcs_plugin(p_name);
+	VCSSettingsEditor::_register_vcs_plugin(p_name);
 }
 
 void EditorVCSAPI::get_commit_dock() {

@@ -12,7 +12,7 @@ void VCSSettingsEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_vcs_name"), &VCSSettingsEditor::get_vcs_name);
 }
 
-void VCSSettingsEditor::register_vcs_plugin(String p_vcs_name) {
+void VCSSettingsEditor::_register_vcs_plugin(String p_vcs_name) {
 
 	if (available_vcs.find(p_vcs_name) != -1) {
 		available_vcs.append(p_vcs_name);

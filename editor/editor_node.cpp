@@ -6534,6 +6534,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(PhysicalBonePlugin(this)));
 	add_editor_plugin(memnew(MeshEditorPlugin(this)));
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
+	add_editor_plugin(memnew(VersionControlEditorPlugin(version_control)));
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
