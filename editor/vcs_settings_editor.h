@@ -9,9 +9,9 @@
 class VCSSettingsEditor : public AcceptDialog {
 	GDCLASS(VCSSettingsEditor, AcceptDialog);
 
+	static Array available_vcs;
 	String vcs_name;
 	bool is_vcs_intialised;
-	static Array available_vcs;
 	EditorData *data;
 
 	Label *vcs_name_label;
