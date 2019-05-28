@@ -1,6 +1,8 @@
 #include "vcs_settings_editor.h"
 #include "editor_settings.h"
 
+Array VCSSettingsEditor::available_vcs;
+
 void VCSSettingsEditor::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_initialise_vcs"), &VCSSettingsEditor::_initialise_vcs);
