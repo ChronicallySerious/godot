@@ -8,7 +8,13 @@ class EditorVersionControl : public VBoxContainer {
 
 	GDCLASS(EditorVersionControl, VBoxContainer)
 
+	HBoxContainer *main_hbc;
+	VBoxContainer *toolbox;
+	VBoxContainer *changes;
+
 public:
+	static EditorVersionControl *register_editor();
+
 	EditorVersionControl();
 	~EditorVersionControl();
 };
