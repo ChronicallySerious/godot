@@ -50,7 +50,6 @@
 #include "editor/editor_run_script.h"
 #include "editor/editor_scale.h"
 #include "editor/editor_sub_scene.h"
-#include "editor/editor_version_control.h"
 #include "editor/export_template_manager.h"
 #include "editor/fileserver/editor_file_server.h"
 #include "editor/filesystem_dock.h"
@@ -63,7 +62,6 @@
 #include "editor/progress_dialog.h"
 #include "editor/project_export.h"
 #include "editor/project_settings_editor.h"
-#include "editor/vcs_settings_editor.h"
 #include "editor/property_editor.h"
 #include "editor/quick_open.h"
 #include "editor/reparent_dialog.h"
@@ -72,6 +70,7 @@
 #include "editor/scene_tree_editor.h"
 #include "editor/script_create_dialog.h"
 #include "editor/settings_config_dialog.h"
+#include "editor/vcs_settings_editor.h"
 #include "scene/gui/center_container.h"
 #include "scene/gui/control.h"
 #include "scene/gui/dialogs.h"
@@ -95,7 +94,7 @@ typedef bool (*EditorBuildCallback)();
 class EditorPluginList;
 
 class EditorNode : public Node {
-
+	
 	GDCLASS(EditorNode, Node);
 
 public:
@@ -345,7 +344,6 @@ private:
 	Node *_last_instanced_scene;
 
 	EditorLog *log;
-	EditorVersionControl *version_control;
 	CenterContainer *tabs_center;
 	EditorQuickOpen *quick_open;
 	EditorQuickOpen *quick_run;

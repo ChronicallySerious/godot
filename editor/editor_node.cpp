@@ -122,6 +122,7 @@
 #include "editor/plugins/theme_editor_plugin.h"
 #include "editor/plugins/tile_map_editor_plugin.h"
 #include "editor/plugins/tile_set_editor_plugin.h"
+#include "editor/plugins/version_control_editor_plugin.h"
 #include "editor/plugins/visual_shader_editor_plugin.h"
 #include "editor/pvrtc_compress.h"
 #include "editor/register_exporters.h"
@@ -6473,6 +6474,7 @@ EditorNode::EditorNode() {
 
 	EditorAudioBuses *audio_bus_editor = EditorAudioBuses::register_editor();
 
+	VersionControl *version_control = VersionControl::register_editor();
 	ScriptTextEditor::register_editor(); //register one for text scripts
 	TextEditor::register_editor();
 
@@ -6534,7 +6536,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(PhysicalBonePlugin(this)));
 	add_editor_plugin(memnew(MeshEditorPlugin(this)));
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
-	add_editor_plugin(memnew(VersionControlEditorPlugin(version_control)));
+	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
