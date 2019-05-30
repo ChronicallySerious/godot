@@ -98,7 +98,7 @@ typedef bool (*EditorBuildCallback)();
 class EditorPluginList;
 
 class EditorNode : public Node {
-	
+
 	GDCLASS(EditorNode, Node);
 
 public:
