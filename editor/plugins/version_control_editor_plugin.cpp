@@ -9,14 +9,15 @@ void VersionControl::_bind_methods() {
 VersionControl *VersionControl::register_editor() {
 
 	version_control = memnew(VersionControl);
-	Button *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), version_control);
+	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), version_control);
+	version_control->set_tool_button(vc);
 
 	return version_control;
 }
 
-void VersionControl::open_layout() {
+void VersionControl::set_tool_button(ToolButton * p_button) {
 
-	EditorNode::get_singleton()->make_bottom_panel_item_visible(this);
+	tool_button = p_button;
 }
 
 VersionControl::VersionControl() {

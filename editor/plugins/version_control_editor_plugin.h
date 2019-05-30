@@ -10,6 +10,10 @@ class VersionControl : public PanelContainer {
 
 	static VersionControl *version_control;
 
+	// ADD COMMIT DOCK CHILD CLASS AND MAKE A PANEL WITH IT
+
+	ToolButton *tool_button;
+
 protected:
 	static void _bind_methods();
 
@@ -18,7 +22,7 @@ public:
 	
 	static VersionControl *register_editor();
 
-	void open_layout();
+	void set_tool_button(ToolButton *p_button);
 
 	VersionControl();
 	~VersionControl();
