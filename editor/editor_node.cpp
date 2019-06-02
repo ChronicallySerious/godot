@@ -178,6 +178,16 @@ void EditorNode::_update_scene_tabs() {
 	}
 }
 
+void EditorNode::_version_control_menu_option(int p_idx) {
+
+	switch (vcs_menu->get_item_id(p_idx)) {
+		case RUN_VCS_SETTINGS: {
+
+			vcs_settings->popup_vcs_initialization_settings(gui_base);
+		} break;
+	}
+}
+
 void EditorNode::_update_title() {
 
 	String appname = ProjectSettings::get_singleton()->get("application/config/name");
@@ -2314,10 +2324,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		case RUN_SETTINGS: {
 
 			project_settings->popup_project_settings();
-		} break;
-		case RUN_VCS_SETTINGS: {
-
-			vcs_settings->popup_vcs_settings();
 		} break;
 		case FILE_INSTALL_ANDROID_SOURCE: {
 
@@ -5247,6 +5253,7 @@ void EditorNode::_bind_methods() {
 	ClassDB::bind_method("_clear_undo_history", &EditorNode::_clear_undo_history);
 	ClassDB::bind_method("_dropped_files", &EditorNode::_dropped_files);
 	ClassDB::bind_method("_toggle_distraction_free_mode", &EditorNode::_toggle_distraction_free_mode);
+	ClassDB::bind_method("_version_control_menu_option", &EditorNode::_version_control_menu_option);
 	ClassDB::bind_method("edit_item_resource", &EditorNode::edit_item_resource);
 
 	ClassDB::bind_method(D_METHOD("get_gui_base"), &EditorNode::get_gui_base);
@@ -5846,7 +5853,7 @@ EditorNode::EditorNode() {
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
 
-	vcs_settings = memnew(VCSSettingsEditor(&editor_data));
+	vcs_settings = memnew(EditorVersionControlSettings(&editor_data));
 	gui_base->add_child(vcs_settings);
 
 	run_settings_dialog = memnew(RunSettingsDialog);
@@ -5931,8 +5938,13 @@ EditorNode::EditorNode() {
 	plugin_config_dialog->connect("plugin_ready", this, "_on_plugin_ready");
 	gui_base->add_child(plugin_config_dialog);
 
+	vcs_menu = memnew(PopupMenu);
+	vcs_menu->set_name("Version Control");
+	vcs_menu->connect("index_pressed", this, "_version_control_menu_option");
 	p->add_separator();
-	p->add_shortcut(ED_SHORTCUT("editor/vcs_settings", TTR("Version Control Settings")), RUN_VCS_SETTINGS);
+	p->add_child(vcs_menu);
+	p->add_submenu_item(TTR("Version Control Actions"), "Version Control");
+	vcs_menu->add_item(TTR("Set Up Version Control"), RUN_VCS_SETTINGS);
 
 	tool_menu = memnew(PopupMenu);
 	tool_menu->set_name("Tools");

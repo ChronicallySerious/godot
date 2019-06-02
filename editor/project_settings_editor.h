@@ -36,6 +36,7 @@
 #include "editor/editor_data.h"
 #include "editor/editor_plugin_settings.h"
 #include "editor/editor_sectioned_inspector.h"
+#include "editor/editor_version_control_settings.h"
 #include "scene/gui/dialogs.h"
 #include "scene/gui/tab_container.h"
 
@@ -110,6 +111,8 @@ class ProjectSettingsEditor : public AcceptDialog {
 	EditorAutoloadSettings *autoload_settings;
 
 	EditorPluginSettings *plugin_settings;
+
+	EditorVersionControlSettings *version_control_settings;
 
 	void _item_selected(const String &);
 	void _item_adds(String);
