@@ -2019,11 +2019,16 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	plugin_settings->set_name(TTR("Plugins"));
 	tab_container->add_child(plugin_settings);
 
+	version_control_settings = memnew(VersionControlSettings(p_data));
+	version_control_settings->set_name(TTR("Version Control"));
+	tab_container->add_child(version_control_settings);
+
 	timer = memnew(Timer);
 	timer->set_wait_time(1.5);
 	timer->connect("timeout", ProjectSettings::get_singleton(), "save");
 	timer->set_one_shot(true);
 	add_child(timer);
+
 
 	updating_translations = false;
 }

@@ -1,14 +1,23 @@
-#include "editor_vcs_api.h"
-#include "vcs_settings_editor.h"
+#include "editor/editor_vcs_api.h"
+#include "editor/plugins/version_control_editor_plugin.h"
 
-void EditorVCSAPI::register_to_editor(String p_name) {
-	VCSSettingsEditor::_register_vcs_plugin(p_name);
+void EditorVCS::_register_to_editor(String p_name) {
+
+	if (!VersionControlEditorPlugin::get_singleton()->register_vcs(p_name)) {
+
+		WARN_PRINT("Duplicate VCS entry trying to be registered.");
+	}
 }
 
-void EditorVCSAPI::get_commit_dock() {
-	_get_commit_dock();
+void EditorVCS::get_commit_dock() {
 }
 
-String EditorVCSAPI::get_vcs_name() {
-	return _get_vcs_name();
+String EditorVCS::get_vcs_name() {
+	return vcs_name;
+}
+
+EditorVCS::EditorVCS(String p_vcs_name) {
+}
+
+EditorVCS::~EditorVCS() {
 }

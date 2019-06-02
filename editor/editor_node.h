@@ -70,7 +70,6 @@
 #include "editor/scene_tree_editor.h"
 #include "editor/script_create_dialog.h"
 #include "editor/settings_config_dialog.h"
-#include "editor/vcs_settings_editor.h"
 #include "scene/gui/center_container.h"
 #include "scene/gui/control.h"
 #include "scene/gui/dialogs.h"
@@ -271,7 +270,6 @@ private:
 	MenuButton *debug_menu;
 	MenuButton *settings_menu;
 	MenuButton *help_menu;
-	PopupMenu *vcs_menu;
 	PopupMenu *tool_menu;
 	ToolButton *export_button;
 	ToolButton *prev_scene;
@@ -324,7 +322,7 @@ private:
 	EditorSettingsDialog *settings_config_dialog;
 	RunSettingsDialog *run_settings_dialog;
 	ProjectSettingsEditor *project_settings;
-	VCSSettingsEditor *vcs_settings;
+	EditorVersionControlActions *vcs_actions_menu;
 	EditorFileDialog *file;
 	ExportTemplateManager *export_template_manager;
 	EditorFeatureProfileManager *feature_profile_manager;
@@ -480,6 +478,7 @@ private:
 	void _get_scene_metadata(const String &p_file);
 	void _update_title();
 	void _update_scene_tabs();
+	void _version_control_menu_option(int p_idx);
 	void _close_messages();
 	void _show_messages();
 	void _vp_resized();
@@ -694,7 +693,6 @@ public:
 	ScriptCreateDialog *get_script_create_dialog() { return scene_tree_dock->get_script_create_dialog(); }
 
 	ProjectSettingsEditor *get_project_settings() { return project_settings; }
-	VCSSettingsEditor *get_vcs_settings() { return vcs_settings; }
 
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
