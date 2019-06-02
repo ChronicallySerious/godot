@@ -1,8 +1,9 @@
-#include "editor_vcs_api.h"
-#include "vcs_settings_editor.h"
+#include "editor/editor_vcs_api.h"
+#include "editor/editor_version_control_settings.h"
 
 void EditorVCSAPI::register_to_editor(String p_name) {
-	VCSSettingsEditor::_register_vcs_plugin(p_name);
+
+	EditorVersionControlSettings::_register_vcs_plugin(p_name);
 }
 
 void EditorVCSAPI::get_commit_dock() {
