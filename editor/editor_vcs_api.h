@@ -4,22 +4,19 @@
 #include "core/ustring.h"
 #include "core/object.h"
 
-class EditorVCSAPI {
+class EditorVCS {
 
 private:
 	String vcs_name;
 
-	static void register_to_editor(String vcs_name);
-
-	String _get_vcs_name();
-	String _get_commit_dock();
+	static void _register_to_editor(String vcs_name);
 
 public:
-	void get_commit_dock();
-	String get_vcs_name();
+	virtual void get_commit_dock() = 0;
+	virtual String get_vcs_name() = 0;
 
-	EditorVCSAPI(String p_vcs_name);
-	virtual ~EditorVCSAPI();
+	EditorVCS(String p_vcs_name);
+	virtual ~EditorVCS();
 };
 
 #endif
