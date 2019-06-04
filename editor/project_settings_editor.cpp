@@ -2019,7 +2019,7 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	plugin_settings->set_name(TTR("Plugins"));
 	tab_container->add_child(plugin_settings);
 
-	version_control_settings = memnew(EditorVersionControlSettings(data));
+	version_control_settings = memnew(VersionControlSettings(p_data));
 	version_control_settings->set_name(TTR("Version Control"));
 	tab_container->add_child(version_control_settings);
 

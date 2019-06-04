@@ -327,7 +327,6 @@ private:
 	EditorSettingsDialog *settings_config_dialog;
 	RunSettingsDialog *run_settings_dialog;
 	ProjectSettingsEditor *project_settings;
-	EditorVersionControlSettings *vcs_settings;
 	EditorFileDialog *file;
 	ExportTemplateManager *export_template_manager;
 	EditorFeatureProfileManager *feature_profile_manager;
@@ -695,7 +694,6 @@ public:
 	ScriptCreateDialog *get_script_create_dialog() { return scene_tree_dock->get_script_create_dialog(); }
 
 	ProjectSettingsEditor *get_project_settings() { return project_settings; }
-	EditorVersionControlSettings *get_version_control_settings() { return vcs_settings; }
 
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);

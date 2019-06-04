@@ -183,7 +183,7 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 	switch (vcs_menu->get_item_id(p_idx)) {
 		case RUN_VCS_SETTINGS: {
 
-			vcs_settings->popup_vcs_initialization_settings(gui_base);
+			 VersionControlEditorPlugin::get_singleton()->get_vcs_actions_panel()->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
 }
@@ -5853,9 +5853,6 @@ EditorNode::EditorNode() {
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
 
-	vcs_settings = memnew(EditorVersionControlSettings(&editor_data));
-	gui_base->add_child(vcs_settings);
-
 	run_settings_dialog = memnew(RunSettingsDialog);
 	gui_base->add_child(run_settings_dialog);
 
@@ -6391,7 +6388,6 @@ EditorNode::EditorNode() {
 
 	EditorAudioBuses *audio_bus_editor = EditorAudioBuses::register_editor();
 
-	VersionControl *version_control = VersionControl::register_editor();
 	ScriptTextEditor::register_editor(); //register one for text scripts
 	TextEditor::register_editor();
 
@@ -6454,6 +6450,8 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(MeshEditorPlugin(this)));
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
 	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
+
+	EditorVersionControlDock *version_control = VersionControlEditorPlugin::get_singleton()->get_vcs_dock()->register_editor();
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
