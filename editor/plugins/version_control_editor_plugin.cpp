@@ -8,14 +8,14 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 void EditorVersionControlActions::_selected_a_vcs() {
 
 	const Array &available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
-	const String &selected_vcs = vcs_choice_drop_down->get_text();
+	const String &selected_vcs = set_up_choice->get_text();
 
 	if (available_vcs.find(selected_vcs) != -1) {
 
-		ok_button->set_disabled(false);
+		set_up_ok_button->set_disabled(false);
 	} else {
 
-		ok_button->set_disabled(true);
+		set_up_ok_button->set_disabled(true);
 	}
 }
 
@@ -33,47 +33,47 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(Control *p_gui_base) {
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
 
-	VersionControlEditorPlugin::get_singleton()->set_vcs_name(EditorSettings::get_singleton()->get_project_metadata("vcs", "name", ""));
-
-	bool is_vcs_initialized = VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialised();
-
-	if (is_vcs_initialized) {
-		ok_button->set_disabled(true);
+	if (VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialised()) {
+		set_up_ok_button->set_disabled(true);
 	}
 
-	popup_centered(popup_size);
+	Array available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
+	for (int i = 0; i < available_vcs.size(); i++) {
+		set_up_choice->add_item(available_vcs[i]);
+	}
+
+	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE, 0.8);
+
 }
 
 EditorVersionControlActions::EditorVersionControlActions() {
-	
-	set_title(TTR("Set Up Version Control"));
+
+	set_up_dialog = memnew(AcceptDialog);
+	set_up_dialog->set_title(TTR("Set Up Version Control"));
 	set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
+	add_child(set_up_dialog);
 
-	vcs_set_up_vbc = memnew(VBoxContainer);
-	add_child(vcs_set_up_vbc);
+	set_up_vbc = memnew(VBoxContainer);
+	set_up_dialog->add_child(set_up_vbc);
 
-	ok_button = get_ok();
-	ok_button->set_disabled(true);
-	ok_button->connect("pressed", this, "_initialize_vcs");
-	vcs_set_up_vbc->add_child(ok_button);
+	set_up_ok_button = set_up_dialog->get_ok();
+	set_up_ok_button->set_disabled(true);
+	set_up_ok_button->set_text(TTR("Initialize Version Control"));
+	set_up_ok_button->connect("pressed", this, "_initialize_vcs");
 
-	vcs_set_up_hbc = memnew(HBoxContainer);
-	vcs_set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	vcs_set_up_vbc->add_child(vcs_set_up_hbc);
+	set_up_hbc = memnew(HBoxContainer);
+	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	set_up_vbc->add_child(set_up_hbc);
 	
-	vcs_name_label = memnew(Label);
-	vcs_name_label->set_text(TTR("Version Control System"));
-	vcs_set_up_hbc->add_child(vcs_name_label);
+	set_up_vcs_label = memnew(Label);
+	set_up_vcs_label->set_text(TTR("Version Control System"));
+	set_up_hbc->add_child(set_up_vcs_label);
 
-	vcs_choice_drop_down = memnew(OptionButton);
-	vcs_choice_drop_down->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	vcs_choice_drop_down->set_text(TTR("Select an available VCS"));
-	const Array &available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
-	for (int i = 0; i < available_vcs.size(); i++) {
-		vcs_choice_drop_down->add_item(available_vcs[i]);
-	}
-	vcs_choice_drop_down->connect("pressed", this, "_selected_a_vcs");
-	vcs_set_up_hbc->add_child(vcs_choice_drop_down);
+	set_up_choice = memnew(OptionButton);
+	set_up_choice->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	set_up_choice->set_text(TTR("Select an available VCS"));
+	set_up_choice->connect("pressed", this, "_selected_a_vcs");
+	set_up_hbc->add_child(set_up_choice);
 }
 
 EditorVersionControlActions::~EditorVersionControlActions() {

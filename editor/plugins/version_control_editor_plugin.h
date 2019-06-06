@@ -4,15 +4,16 @@
 #include "editor/editor_plugin.h"
 #include "scene/gui/container.h"
 
-class EditorVersionControlActions : public AcceptDialog {
+class EditorVersionControlActions : public PopupMenu {
 
-	GDCLASS(EditorVersionControlActions, AcceptDialog)
+	GDCLASS(EditorVersionControlActions, PopupMenu)
 
-	VBoxContainer *vcs_set_up_vbc;
-	HBoxContainer *vcs_set_up_hbc;
-	Label *vcs_name_label;
-	OptionButton *vcs_choice_drop_down;
-	Button *ok_button;
+	AcceptDialog *set_up_dialog;
+	VBoxContainer *set_up_vbc;
+	HBoxContainer *set_up_hbc;
+	Label *set_up_vcs_label;
+	OptionButton *set_up_choice;
+	Button *set_up_ok_button;
 
 	void _selected_a_vcs();
 

@@ -180,10 +180,10 @@ void EditorNode::_update_scene_tabs() {
 
 void EditorNode::_version_control_menu_option(int p_idx) {
 
-	switch (vcs_menu->get_item_id(p_idx)) {
+	switch (vcs_actions_menu->get_item_id(p_idx)) {
 		case RUN_VCS_SETTINGS: {
 
-			 VersionControlEditorPlugin::get_singleton()->get_vcs_actions_panel()->popup_vcs_set_up_dialog(gui_base);
+			 vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
 }
@@ -5935,13 +5935,13 @@ EditorNode::EditorNode() {
 	plugin_config_dialog->connect("plugin_ready", this, "_on_plugin_ready");
 	gui_base->add_child(plugin_config_dialog);
 
-	vcs_menu = memnew(PopupMenu);
-	vcs_menu->set_name("Version Control");
-	vcs_menu->connect("index_pressed", this, "_version_control_menu_option");
+	vcs_actions_menu = memnew(EditorVersionControlActions);
+	vcs_actions_menu->set_name("Version Control");
+	vcs_actions_menu->connect("index_pressed", this, "_version_control_menu_option");
 	p->add_separator();
-	p->add_child(vcs_menu);
+	p->add_child(vcs_actions_menu);
 	p->add_submenu_item(TTR("Version Control Actions"), "Version Control");
-	vcs_menu->add_item(TTR("Set Up Version Control"), RUN_VCS_SETTINGS);
+	vcs_actions_menu->add_item(TTR("Set Up Version Control"), RUN_VCS_SETTINGS);
 
 	tool_menu = memnew(PopupMenu);
 	tool_menu->set_name("Tools");
