@@ -135,3 +135,19 @@ VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 	memdelete(vcs_actions);
 	memdelete(vcs_dock);
 }
+
+EditorVersionCommitDock::EditorVersionCommitDock() {
+
+	top_hbc = memnew(HBoxContainer);
+	add_child(top_hbc);
+
+	commit_message = memnew(LineEdit);
+	top_hbc->add_child(commit_message);
+
+	commit = memnew(Button);
+	commit->set_text(TTR("Commit"));
+	top_hbc->add_child(commit);
+}
+
+EditorVersionCommitDock::~EditorVersionCommitDock() {
+}
