@@ -3,6 +3,7 @@
 
 #include "editor/editor_plugin.h"
 #include "scene/gui/container.h"
+#include "scene/gui/line_edit.h"
 
 class EditorVersionControlActions : public PopupMenu {
 
@@ -25,6 +26,20 @@ public:
 
 	EditorVersionControlActions();
 	~EditorVersionControlActions();
+};
+
+class EditorVersionCommitDock : public VBoxContainer {
+
+	GDCLASS(EditorVersionCommitDock, VBoxContainer)
+
+	HBoxContainer *top_hbc;
+	LineEdit *commit_message;
+	Button *commit;
+	VBoxContainer *changelog;
+
+public:
+	EditorVersionCommitDock();
+	~EditorVersionCommitDock();
 };
 
 class EditorVersionControlDock : public PanelContainer {

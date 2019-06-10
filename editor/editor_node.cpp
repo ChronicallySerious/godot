@@ -6198,6 +6198,7 @@ EditorNode::EditorNode() {
 	inspector_dock = memnew(InspectorDock(this, editor_data));
 	import_dock = memnew(ImportDock);
 	node_dock = memnew(NodeDock);
+	vcs_commit_dock = memnew(EditorVersionCommitDock);
 
 	filesystem_dock = memnew(FileSystemDock(this));
 	filesystem_dock->connect("inherit", this, "_inherit_request");
@@ -6223,6 +6224,10 @@ EditorNode::EditorNode() {
 	// Node: Full height right, behind Inspector
 	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(node_dock);
 	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(node_dock->get_index(), TTR("Node"));
+
+	// Commit: Full height right, behind Node
+	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(vcs_commit_dock);
+	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(vcs_commit_dock->get_index(), TTR("Commit"));
 
 	// Hide unused dock slots and vsplits
 	dock_slot[DOCK_SLOT_LEFT_UL]->hide();
