@@ -3,7 +3,7 @@
 
 #include "editor/editor_plugin.h"
 #include "scene/gui/container.h"
-#include "scene/gui/line_edit.h"
+#include "scene/gui/text_edit.h"
 
 class EditorVersionControlActions : public PopupMenu {
 
@@ -32,10 +32,11 @@ class EditorVersionCommitDock : public VBoxContainer {
 
 	GDCLASS(EditorVersionCommitDock, VBoxContainer)
 
-	HBoxContainer *top_hbc;
-	LineEdit *commit_message;
+	Button *stage;
+	VBoxContainer *commit_box;
+	HBoxContainer *commit_top_hbc;
+	TextEdit *commit_message;
 	Button *commit;
-	VBoxContainer *changelog;
 
 public:
 	EditorVersionCommitDock();
@@ -96,7 +97,7 @@ public:
 	EditorVersionControlDock *get_vcs_dock() { return vcs_dock; }
 
 	void set_vcs_name(String p_vcs_name) { vcs_name = p_vcs_name; }
-	
+
 	VersionControlEditorPlugin(EditorNode *p_node);
 	~VersionControlEditorPlugin();
 };
