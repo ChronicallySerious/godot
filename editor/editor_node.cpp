@@ -6551,7 +6551,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
 	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
 
-	EditorVersionControlDock *version_control = VersionControlEditorPlugin::get_singleton()->get_vcs_dock()->register_editor();
+	VersionControlEditorPlugin::get_singleton()->get_vcs_dock()->register_editor();
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
