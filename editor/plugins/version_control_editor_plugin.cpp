@@ -64,7 +64,7 @@ EditorVersionControlActions::EditorVersionControlActions() {
 	set_up_hbc = memnew(HBoxContainer);
 	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
 	set_up_vbc->add_child(set_up_hbc);
-	
+
 	set_up_vcs_label = memnew(Label);
 	set_up_vcs_label->set_text(TTR("Version Control System"));
 	set_up_hbc->add_child(set_up_vcs_label);
@@ -74,6 +74,33 @@ EditorVersionControlActions::EditorVersionControlActions() {
 	set_up_choice->set_text(TTR("Select an available VCS"));
 	set_up_choice->connect("pressed", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
+}
+
+EditorVersionCommitDock::EditorVersionCommitDock() {
+
+	set_v_size_flags(SIZE_EXPAND_FILL);
+	set_h_size_flags(SIZE_EXPAND_FILL);
+
+	commit_box = memnew(VBoxContainer);
+	add_child(commit_box);
+
+	stage = memnew(Button);
+	stage->set_text(TTR("Stage files"));
+	add_child(stage);
+
+	commit_top_hbc = memnew(HBoxContainer);
+	commit_top_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	add_child(commit_top_hbc);
+
+	commit_message = memnew(TextEdit);
+	commit_message->set_text(TTR("Commit messages can have multiple lines"));
+	commit_message->set_custom_minimum_size(Size2(100, 70));
+	commit_message->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	commit_box->add_child(commit_message);
+
+	commit = memnew(Button);
+	commit->set_text(TTR("Commit"));
+	commit_box->add_child(commit);
 }
 
 EditorVersionControlActions::~EditorVersionControlActions() {
@@ -134,19 +161,6 @@ VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
 	memdelete(vcs_actions);
 	memdelete(vcs_dock);
-}
-
-EditorVersionCommitDock::EditorVersionCommitDock() {
-
-	top_hbc = memnew(HBoxContainer);
-	add_child(top_hbc);
-
-	commit_message = memnew(LineEdit);
-	top_hbc->add_child(commit_message);
-
-	commit = memnew(Button);
-	commit->set_text(TTR("Commit"));
-	top_hbc->add_child(commit);
 }
 
 EditorVersionCommitDock::~EditorVersionCommitDock() {
