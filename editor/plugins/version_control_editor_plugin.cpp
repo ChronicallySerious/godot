@@ -26,7 +26,7 @@ void EditorVersionControlActions::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &EditorVersionControlActions::popup_vcs_set_up_dialog);
 }
 
-void EditorVersionControlActions::popup_vcs_set_up_dialog(Control *p_gui_base) {
+void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
 	Size2 popup_size = Size2(450, 300);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
@@ -34,11 +34,13 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(Control *p_gui_base) {
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
 
 	if (VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialised()) {
+
 		set_up_ok_button->set_disabled(true);
 	}
 
 	Array available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
 	for (int i = 0; i < available_vcs.size(); i++) {
+
 		set_up_choice->add_item(available_vcs[i]);
 	}
 
@@ -129,7 +131,7 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
 }
 
-bool VersionControlEditorPlugin::register_vcs(String p_vcs_name) {
+bool VersionControlEditorPlugin::register_vcs(const String &p_vcs_name) {
 
 	if (available_vcs.find(p_vcs_name) != -1) {
 
@@ -139,7 +141,7 @@ bool VersionControlEditorPlugin::register_vcs(String p_vcs_name) {
 	return false;
 }
 
-void VersionControlEditorPlugin::_initialize_vcs(String p_vcs_name) {
+void VersionControlEditorPlugin::_initialize_vcs(const String &p_vcs_name) {
 
 	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
 	vcs_name = p_vcs_name;
