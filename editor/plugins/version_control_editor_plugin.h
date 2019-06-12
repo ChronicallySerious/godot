@@ -22,7 +22,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void popup_vcs_set_up_dialog(Control *p_gui_base);
+	void popup_vcs_set_up_dialog(const Control *p_gui_base);
 
 	EditorVersionControlActions();
 	~EditorVersionControlActions();
@@ -80,21 +80,21 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	EditorNode *editor_node;
 
-	void _initialize_vcs(String p_vcs_name);
+	void _initialize_vcs(const String &p_vcs_name);
 
 	static void _bind_methods();
 
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
-	bool register_vcs(String p_vcs_name);
+	bool register_vcs(const String &p_vcs_name);
 
-	const Array &get_available_vcs() { return available_vcs; }
-	const bool &get_is_vcs_intialised() { return is_vcs_intialised; }
-	const String &get_vcs_name() { return vcs_name; }
+	const Array &get_available_vcs() const { return available_vcs; }
+	const bool &get_is_vcs_intialised() const { return is_vcs_intialised; }
+	const String &get_vcs_name() const { return vcs_name; }
 
-	EditorVersionControlActions *get_vcs_actions_panel() { return vcs_actions; }
-	EditorVersionControlDock *get_vcs_dock() { return vcs_dock; }
+	EditorVersionControlActions *get_vcs_actions_panel() const { return vcs_actions; }
+	EditorVersionControlDock *get_vcs_dock() const { return vcs_dock; }
 
 	void set_vcs_name(String p_vcs_name) { vcs_name = p_vcs_name; }
 

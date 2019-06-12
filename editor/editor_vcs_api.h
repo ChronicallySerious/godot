@@ -9,13 +9,13 @@ class EditorVCS {
 private:
 	String vcs_name;
 
-	static void _register_to_editor(String vcs_name);
+	static void _register_to_editor(const String &vcs_name);
 
 public:
-	virtual void get_commit_dock() = 0;
-	virtual String get_vcs_name() = 0;
+	virtual void get_commit_dock() const = 0;
+	virtual String get_vcs_name() const = 0;
 
-	EditorVCS(String p_vcs_name);
+	EditorVCS();
 	virtual ~EditorVCS();
 };
 
