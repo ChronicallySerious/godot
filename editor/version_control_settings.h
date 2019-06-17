@@ -13,7 +13,7 @@ class VersionControlSettings : public VBoxContainer {
 
 	static void _bind_methods();
 
-	friend class EditorVCSAPI;
+	friend class EditorVCS;
 
 public:
 	static String get_vcs_name() { return VersionControlEditorPlugin::get_singleton()->get_vcs_name(); }

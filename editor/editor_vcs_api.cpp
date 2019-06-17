@@ -1,9 +1,9 @@
 #include "editor/editor_vcs_api.h"
 #include "editor/plugins/version_control_editor_plugin.h"
 
-void EditorVCS::_register_to_editor(const String &p_name) {
+void EditorVCS::_register_to_editor(const String &p_vcs_name) {
 
-	if (!VersionControlEditorPlugin::get_singleton()->register_vcs(p_name)) {
+	if (!VersionControlEditorPlugin::get_singleton()->register_vcs(p_vcs_name)) {
 
 		WARN_PRINT("Duplicate VCS entry trying to be registered.");
 	}
@@ -17,7 +17,9 @@ String EditorVCS::get_vcs_name() const {
 	return vcs_name;
 }
 
-EditorVCS::EditorVCS() {
+EditorVCS::EditorVCS(String p_vcs_name) : vcs_name(p_vcs_name) {
+
+	_register_to_editor(vcs_name)
 }
 
 EditorVCS::~EditorVCS() {
