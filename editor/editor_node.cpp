@@ -5545,6 +5545,8 @@ EditorNode::EditorNode() {
 	EditorFileDialog::register_func = _editor_file_dialog_register;
 	EditorFileDialog::unregister_func = _editor_file_dialog_unregister;
 
+	editor_vcs_api = memnew(EditorVCS);
+
 	editor_export = memnew(EditorExport);
 	add_child(editor_export);
 
@@ -6642,6 +6644,7 @@ EditorNode::~EditorNode() {
 	memdelete(editor_plugins_force_input_forwarding);
 	memdelete(file_server);
 	memdelete(progress_hb);
+	memdelete(editor_vcs_api);
 
 	EditorSettings::destroy();
 }

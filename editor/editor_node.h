@@ -424,6 +424,8 @@ private:
 
 	EditorFileServer *file_server;
 
+	EditorVCS *editor_vcs_api;
+
 	struct BottomPanelItem {
 		String name;
 		Control *control;
