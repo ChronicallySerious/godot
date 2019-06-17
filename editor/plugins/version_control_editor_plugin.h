@@ -14,9 +14,15 @@ class EditorVersionControlActions : public PopupMenu {
 	HBoxContainer *set_up_hbc;
 	Label *set_up_vcs_label;
 	OptionButton *set_up_choice;
+	Control *set_up_init_settings;
+	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
-	void _selected_a_vcs();
+	void _populate_available_vcs_names();
+	void _selected_a_vcs(int p_id);
+	void _initialize_vcs();
+
+	friend class VersionControlEditorPlugin;
 
 protected:
 	static void _bind_methods();
@@ -48,17 +54,11 @@ class EditorVersionControlDock : public PanelContainer {
 	GDCLASS(EditorVersionControlDock, PanelContainer)
 
 protected:
-	static EditorVersionControlDock *singleton;
-
 	ToolButton *tool_button;
 
 	static void _bind_methods();
 
 public:
-	EditorVersionControlDock *register_editor();
-
-	static EditorVersionControlDock *get_singleton() { return singleton; }
-
 	void set_tool_button(ToolButton *p_button) { tool_button = p_button; }
 
 	EditorVersionControlDock();
@@ -71,35 +71,38 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	static VersionControlEditorPlugin *singleton;
 
-	Array available_vcs;
-	bool is_vcs_intialised;
+	List<StringName> available_vcs_names;
 	String vcs_name;
 
-	EditorVersionControlActions *vcs_actions;
-	EditorVersionControlDock *vcs_dock;
+	EditorVersionControlActions *version_control_actions;
+	EditorVersionControlDock *version_control_dock;
+	EditorVersionCommitDock *version_commit_dock;
 
 	EditorNode *editor_node;
 
-	void _initialize_vcs(const String &p_vcs_name);
-
 	static void _bind_methods();
+
+	friend class EditorVCSInterface;
+	friend class EditorVersionControlActions;
 
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
-	bool register_vcs(const String &p_vcs_name);
+	void register_editor();
+	void fetch_available_vcs_addon_names();
 
-	const Array &get_available_vcs() const { return available_vcs; }
-	const bool &get_is_vcs_intialised() const { return is_vcs_intialised; }
-	const String &get_vcs_name() const { return vcs_name; }
+	List<StringName> get_available_vcs_names() const { return available_vcs_names; }
+	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }
+	const String get_vcs_name() const { return vcs_name; }
 
-	EditorVersionControlActions *get_vcs_actions_panel() const { return vcs_actions; }
-	EditorVersionControlDock *get_vcs_dock() const { return vcs_dock; }
+	EditorVersionControlActions *get_version_control_actions_panel() const { return version_control_actions; }
+	EditorVersionControlDock *get_version_control_dock() const { return version_control_dock; }
+	EditorVersionCommitDock *get_version_commit_dock() const { return version_commit_dock; }
 
-	void set_vcs_name(String p_vcs_name) { vcs_name = p_vcs_name; }
+	void set_version_control_name(String p_vcs_name) { vcs_name = p_vcs_name; }
 
 	VersionControlEditorPlugin(EditorNode *p_node);
 	~VersionControlEditorPlugin();
 };
 
-#endif // VERSION_CONTROL_EDITOR_PLUGIN_H
+#endif // !VERSION_CONTROL_EDITOR_PLUGIN_H

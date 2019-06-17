@@ -298,7 +298,7 @@ private:
 	SceneTreeDock *scene_tree_dock;
 	InspectorDock *inspector_dock;
 	NodeDock *node_dock;
-	EditorVersionCommitDock *vcs_commit_dock;
+	EditorVersionCommitDock *version_commit_dock;
 	ImportDock *import_dock;
 	FileSystemDock *filesystem_dock;
 	EditorRunNative *run_native;

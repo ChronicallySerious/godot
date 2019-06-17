@@ -1,29 +1,49 @@
 #include "version_control_editor_plugin.h"
+#include "core/script_language.h"
 #include "editor/editor_node.h"
-
-EditorVersionControlDock *EditorVersionControlDock::singleton = NULL;
+#include "editor_vcs_interface.h"
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
-void EditorVersionControlActions::_selected_a_vcs() {
+void EditorVersionControlActions::_selected_a_vcs(int p_id) {
 
-	const Array &available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
-	const String &selected_vcs = set_up_choice->get_text();
+	List<StringName> available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
+	const StringName selected_vcs = set_up_choice->get_item_text(p_id);
 
-	if (available_vcs.find(selected_vcs) != -1) {
+	if (available_vcs_names.find(selected_vcs) != NULL) {
 
-		set_up_ok_button->set_disabled(false);
+		set_up_init_button->set_disabled(false);
 	} else {
-
-		set_up_ok_button->set_disabled(true);
+		
+		set_up_init_button->set_disabled(true);
 	}
 }
 
 void EditorVersionControlActions::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &EditorVersionControlActions::_selected_a_vcs);
+	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &EditorVersionControlActions::_initialize_vcs);
 
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &EditorVersionControlActions::popup_vcs_set_up_dialog);
+}
+
+void EditorVersionControlActions::_populate_available_vcs_names() {
+
+	static bool called = false;
+
+	if (!called) {
+
+		set_up_choice->add_item("Select an available VCS");
+
+		VersionControlEditorPlugin::get_singleton()->fetch_available_vcs_addon_names();
+		List<StringName> available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
+		for (int i = 0; i < available_vcs_names.size(); i++) {
+
+			set_up_choice->add_item(available_vcs_names[i]);
+		}
+
+		called = true;
+	}
 }
 
 void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_base) {
@@ -33,35 +53,71 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
 
-	if (VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialised()) {
+	if (VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialized()) {
 
-		set_up_ok_button->set_disabled(true);
+		set_up_init_button->set_disabled(true);
 	}
 
-	Array available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
-	for (int i = 0; i < available_vcs.size(); i++) {
+	_populate_available_vcs_names();
 
-		set_up_choice->add_item(available_vcs[i]);
+	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
+}
+
+void EditorVersionControlActions::_initialize_vcs() {
+
+	int id = set_up_choice->get_selected_id();
+	String selected_addon = set_up_choice->get_item_text(id);
+
+	String path = ScriptServer::get_global_class_path(selected_addon);
+	Ref<Script> script = ResourceLoader::load(path);
+	if (!script.is_valid()) {
+
+		ERR_EXPLAIN("VCS Addon path is invalid");
 	}
 
-	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE, 0.8);
+	EditorVCSInterface *vcs_interface = memnew(EditorVCSInterface);
+	ScriptInstance *addon_script_instance = script->instance_create(vcs_interface);
+	if (!addon_script_instance) {
 
+		ERR_FAIL_NULL(addon_script_instance);
+		return;
+	}
+
+	// The addon is attached as a script to the VCS interface for a cleaner design
+	vcs_interface->set_script_and_instance(script.get_ref_ptr(), addon_script_instance);
+
+	EditorVCSInterface::set_singleton(vcs_interface);
+
+	// Delete the already in use settings panel
+	if (!set_up_init_settings) {
+
+		set_up_vbc->get_parent_control()->remove_child(set_up_init_settings);
+		memdelete(set_up_init_settings);
+	}
+	// Replace it with new one
+	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
+	set_up_vbc->add_child(set_up_init_settings);
+
+	String res_dir = OS::get_singleton()->get_resource_dir();
+	if (!vcs_interface->call("initialize", res_dir)) {
+
+		ERR_EXPLAIN("VCS was not initialized");
+	}
 }
 
 EditorVersionControlActions::EditorVersionControlActions() {
-
+	
 	set_up_dialog = memnew(AcceptDialog);
 	set_up_dialog->set_title(TTR("Set Up Version Control"));
 	set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
 	add_child(set_up_dialog);
 
+	set_up_ok_button = set_up_dialog->get_ok();
+	set_up_ok_button->set_disabled(false);
+	set_up_ok_button->set_text(TTR("Close"));
+
 	set_up_vbc = memnew(VBoxContainer);
 	set_up_dialog->add_child(set_up_vbc);
-
-	set_up_ok_button = set_up_dialog->get_ok();
-	set_up_ok_button->set_disabled(true);
-	set_up_ok_button->set_text(TTR("Initialize Version Control"));
-	set_up_ok_button->connect("pressed", this, "_initialize_vcs");
 
 	set_up_hbc = memnew(HBoxContainer);
 	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
@@ -73,9 +129,18 @@ EditorVersionControlActions::EditorVersionControlActions() {
 
 	set_up_choice = memnew(OptionButton);
 	set_up_choice->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	set_up_choice->set_text(TTR("Select an available VCS"));
-	set_up_choice->connect("pressed", this, "_selected_a_vcs");
+	set_up_choice->connect("item_selected", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
+
+	set_up_init_settings = memnew(Control);
+	set_up_init_settings->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	set_up_vbc->add_child(set_up_init_settings);
+
+	set_up_init_button = memnew(Button);
+	set_up_init_button->set_disabled(true);
+	set_up_init_button->set_text(TTR("Initialize"));
+	set_up_init_button->connect("pressed", this, "_initialize_vcs");
+	set_up_vbc->add_child(set_up_init_button);
 }
 
 EditorVersionCommitDock::EditorVersionCommitDock() {
@@ -111,40 +176,24 @@ EditorVersionControlActions::~EditorVersionControlActions() {
 void EditorVersionControlDock::_bind_methods() {
 }
 
-EditorVersionControlDock *EditorVersionControlDock::register_editor() {
-
-	singleton = this;
-	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), singleton);
-	singleton->set_tool_button(vc);
-
-	return singleton;
-}
-
 EditorVersionControlDock::EditorVersionControlDock() {
 }
 
 EditorVersionControlDock::~EditorVersionControlDock() {
 }
-
+	
 void VersionControlEditorPlugin::_bind_methods() {
-
-	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
 }
 
-bool VersionControlEditorPlugin::register_vcs(const String &p_vcs_name) {
+void VersionControlEditorPlugin::register_editor() {
 
-	if (available_vcs.find(p_vcs_name) != -1) {
-
-		available_vcs.append(p_vcs_name);
-		return true;
-	}
-	return false;
+	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), version_control_dock);
+	version_control_dock->set_tool_button(vc);
 }
 
-void VersionControlEditorPlugin::_initialize_vcs(const String &p_vcs_name) {
+void VersionControlEditorPlugin::fetch_available_vcs_addon_names() {
 
-	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
-	vcs_name = p_vcs_name;
+	ScriptServer::get_global_class_list(&available_vcs_names);
 }
 
 VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
@@ -152,17 +201,18 @@ VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 	singleton = this;
 	editor_node = p_node;
 
-	vcs_actions = memnew(EditorVersionControlActions);
+	version_control_actions = memnew(EditorVersionControlActions);
+	version_control_actions->set_up_dialog->get_ok()->connect("pressed", this, "_initialize_vcs");
 
-	vcs_dock = memnew(EditorVersionControlDock);
-	vcs_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	vcs_dock->hide();
+	version_control_dock = memnew(EditorVersionControlDock);
+	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	version_control_dock->hide();
 }
 
 VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
-	memdelete(vcs_actions);
-	memdelete(vcs_dock);
+	memdelete(version_control_actions);
+	memdelete(version_control_dock);
 }
 
 EditorVersionCommitDock::~EditorVersionCommitDock() {

@@ -183,7 +183,7 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 	switch (vcs_actions_menu->get_item_id(p_idx)) {
 		case RUN_VCS_SETTINGS: {
 
-			 vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
+			vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
 }
@@ -3529,6 +3529,7 @@ void EditorNode::register_editor_types() {
 	ClassDB::register_class<EditorResourcePreviewGenerator>();
 	ClassDB::register_virtual_class<EditorFileSystem>();
 	ClassDB::register_class<EditorFileSystemDirectory>();
+	ClassDB::register_class<EditorVCSInterface>();
 	ClassDB::register_virtual_class<ScriptEditor>();
 	ClassDB::register_virtual_class<EditorInterface>();
 	ClassDB::register_class<EditorExportPlugin>();
@@ -6284,7 +6285,7 @@ EditorNode::EditorNode() {
 	inspector_dock = memnew(InspectorDock(this, editor_data));
 	import_dock = memnew(ImportDock);
 	node_dock = memnew(NodeDock);
-	vcs_commit_dock = memnew(EditorVersionCommitDock);
+	version_commit_dock = memnew(EditorVersionCommitDock);
 
 	filesystem_dock = memnew(FileSystemDock(this));
 	filesystem_dock->connect("inherit", this, "_inherit_request");
@@ -6312,8 +6313,8 @@ EditorNode::EditorNode() {
 	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(node_dock->get_index(), TTR("Node"));
 
 	// Commit: Full height right, behind Node
-	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(vcs_commit_dock);
-	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(vcs_commit_dock->get_index(), TTR("Commit"));
+	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(version_commit_dock);
+	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(version_commit_dock->get_index(), TTR("Commit"));
 
 	// Hide unused dock slots and vsplits
 	dock_slot[DOCK_SLOT_LEFT_UL]->hide();
@@ -6505,6 +6506,9 @@ EditorNode::EditorNode() {
 	//more visually meaningful to have this later
 	raise_bottom_panel_item(AnimationPlayerEditor::singleton);
 
+	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
+	VersionControlEditorPlugin::get_singleton()->register_editor();
+
 	add_editor_plugin(memnew(ShaderEditorPlugin(this)));
 	add_editor_plugin(memnew(VisualShaderEditorPlugin(this)));
 
@@ -6549,9 +6553,6 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(PhysicalBonePlugin(this)));
 	add_editor_plugin(memnew(MeshEditorPlugin(this)));
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
-	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
-
-	VersionControlEditorPlugin::get_singleton()->get_vcs_dock()->register_editor();
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
