@@ -3,6 +3,7 @@
 
 #include "core/ustring.h"
 #include "core/object.h"
+#include "editor/plugins/version_control_editor_plugin.h"
 
 class EditorVCS {
 
