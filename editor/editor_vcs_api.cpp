@@ -1,25 +1,22 @@
 #include "editor/editor_vcs_api.h"
-#include "editor/plugins/version_control_editor_plugin.h"
 
-void EditorVCS::_register_to_editor(const String &p_vcs_name) {
-
-	if (!VersionControlEditorPlugin::get_singleton()->register_vcs(p_vcs_name)) {
-
-		WARN_PRINT("Duplicate VCS entry trying to be registered.");
-	}
+void EditorVCS::_register_to_editor(const EditorVCS &p_singleton) {
 }
 
-void EditorVCS::get_commit_dock() const {
+void EditorVCS::_bind_methods() {
+
+	ClassDB::bind_method(D_METHOD("set_version_control_dock"), &EditorVCS::set_version_control_dock);
+	ClassDB::bind_method(D_METHOD("set_version_commit_dock"), &EditorVCS::set_version_commit_dock);
+	ClassDB::bind_method(D_METHOD("set_version_control_name"), &EditorVCS::set_version_control_name);
+	ClassDB::bind_method(D_METHOD("replace_singleton"), &EditorVCS::replace_singleton);
 }
 
-String EditorVCS::get_vcs_name() const {
-
-	return vcs_name;
+EditorVCS::EditorVCS() :
+		vcs_name("") {
 }
 
-EditorVCS::EditorVCS(String p_vcs_name) : vcs_name(p_vcs_name) {
-
-	_register_to_editor(vcs_name)
+EditorVCS::EditorVCS(String p_vcs_name) :
+		vcs_name(p_vcs_name) {
 }
 
 EditorVCS::~EditorVCS() {
