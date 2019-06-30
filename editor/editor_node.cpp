@@ -3460,6 +3460,7 @@ void EditorNode::register_editor_types() {
 	ClassDB::register_class<EditorScript>();
 	ClassDB::register_class<EditorSelection>();
 	ClassDB::register_class<EditorFileDialog>();
+	ClassDB::register_class<EditorVCS>();
 	ClassDB::register_virtual_class<EditorSettings>();
 	ClassDB::register_class<EditorSpatialGizmo>();
 	ClassDB::register_class<EditorSpatialGizmoPlugin>();
