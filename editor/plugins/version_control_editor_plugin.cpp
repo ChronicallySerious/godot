@@ -7,10 +7,10 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
 void EditorVersionControlActions::_selected_a_vcs() {
 
-	const Array &available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
+	const Array &available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
 	const String &selected_vcs = set_up_choice->get_text();
 
-	if (available_vcs.find(selected_vcs) != -1) {
+	if (available_vcs_names.find(selected_vcs) != -1) {
 
 		set_up_ok_button->set_disabled(false);
 	} else {
@@ -38,11 +38,12 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 		set_up_ok_button->set_disabled(true);
 	}
 
-	Array available_vcs = VersionControlEditorPlugin::get_singleton()->get_available_vcs();
-	for (int i = 0; i < available_vcs.size(); i++) {
+	Array available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
+	for (int i = 0; i < available_vcs_names.size(); i++) {
 
-		set_up_choice->add_item(available_vcs[i]);
+		set_up_choice->add_item(available_vcs_names[i]);
 	}
+	set_up_choice->add_item(EditorVCSInterface::get_singleton()->get_version_control_name());
 
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE, 0.8);
 
@@ -133,9 +134,9 @@ void VersionControlEditorPlugin::_bind_methods() {
 
 bool VersionControlEditorPlugin::register_vcs(const String &p_vcs_name) {
 
-	if (available_vcs.find(p_vcs_name) != -1) {
+	if (available_vcs_names.find(p_vcs_name) != -1) {
 
-		available_vcs.append(p_vcs_name);
+		available_vcs_names.append(p_vcs_name);
 		return true;
 	}
 	return false;
@@ -152,17 +153,20 @@ VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 	singleton = this;
 	editor_node = p_node;
 
-	vcs_actions = memnew(EditorVersionControlActions);
+	EditorVCSInterface::vcs_interface = memnew(EditorVCSInterface());
 
-	vcs_dock = memnew(EditorVersionControlDock);
-	vcs_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	vcs_dock->hide();
+	version_actions = memnew(EditorVersionControlActions);
+
+	version_control_dock = memnew(EditorVersionControlDock);
+	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	version_control_dock->hide();
 }
 
 VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
-	memdelete(vcs_actions);
-	memdelete(vcs_dock);
+	memdelete(version_actions);
+	memdelete(version_control_dock);
+	memdelete(EditorVCSInterface::vcs_interface);
 }
 
 EditorVersionCommitDock::~EditorVersionCommitDock() {
