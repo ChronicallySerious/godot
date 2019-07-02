@@ -3460,7 +3460,7 @@ void EditorNode::register_editor_types() {
 	ClassDB::register_class<EditorScript>();
 	ClassDB::register_class<EditorSelection>();
 	ClassDB::register_class<EditorFileDialog>();
-	ClassDB::register_class<EditorVCS>();
+	ClassDB::register_class<EditorVCSInterface>();
 	ClassDB::register_virtual_class<EditorSettings>();
 	ClassDB::register_class<EditorSpatialGizmo>();
 	ClassDB::register_class<EditorSpatialGizmoPlugin>();
@@ -5478,8 +5478,6 @@ EditorNode::EditorNode() {
 	EditorFileDialog::register_func = _editor_file_dialog_register;
 	EditorFileDialog::unregister_func = _editor_file_dialog_unregister;
 
-	editor_vcs_api = memnew(EditorVCS);
-
 	editor_export = memnew(EditorExport);
 	add_child(editor_export);
 
@@ -6134,7 +6132,7 @@ EditorNode::EditorNode() {
 	inspector_dock = memnew(InspectorDock(this, editor_data));
 	import_dock = memnew(ImportDock);
 	node_dock = memnew(NodeDock);
-	vcs_commit_dock = memnew(EditorVersionCommitDock);
+	version_commit_dock = memnew(EditorVersionCommitDock);
 
 	filesystem_dock = memnew(FileSystemDock(this));
 	filesystem_dock->connect("inherit", this, "_inherit_request");
@@ -6162,8 +6160,8 @@ EditorNode::EditorNode() {
 	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(node_dock->get_index(), TTR("Node"));
 
 	// Commit: Full height right, behind Node
-	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(vcs_commit_dock);
-	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(vcs_commit_dock->get_index(), TTR("Commit"));
+	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(version_commit_dock);
+	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(version_commit_dock->get_index(), TTR("Commit"));
 
 	// Hide unused dock slots and vsplits
 	dock_slot[DOCK_SLOT_LEFT_UL]->hide();
@@ -6392,7 +6390,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
 	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
 
-	VersionControlEditorPlugin::get_singleton()->get_vcs_dock()->register_editor();
+	VersionControlEditorPlugin::get_singleton()->get_version_control_dock()->register_editor();
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
@@ -6578,8 +6576,7 @@ EditorNode::~EditorNode() {
 	memdelete(editor_plugins_force_input_forwarding);
 	memdelete(file_server);
 	memdelete(progress_hb);
-	memdelete(editor_vcs_api);
-
+	
 	EditorSettings::destroy();
 }
 

@@ -71,12 +71,12 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	static VersionControlEditorPlugin *singleton;
 
-	Array available_vcs;
-	bool is_vcs_intialised;
+	Array available_vcs_names;
 	String vcs_name;
 
-	EditorVersionControlActions *vcs_actions;
-	EditorVersionControlDock *vcs_dock;
+	EditorVersionControlActions *version_actions;
+	EditorVersionControlDock *version_control_dock;
+	EditorVersionCommitDock *version_commit_dock;
 
 	EditorNode *editor_node;
 
@@ -84,22 +84,25 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	static void _bind_methods();
 
+	friend class EditorVCSInterface;
+
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
 	bool register_vcs(const String &p_vcs_name);
 
-	const Array &get_available_vcs() const { return available_vcs; }
-	const bool &get_is_vcs_intialised() const { return is_vcs_intialised; }
+	const Array &get_available_vcs_names() const { return available_vcs_names; }
+	const bool &get_is_vcs_intialised() const { return vcs_name == "" ? false : true; }
 	const String &get_vcs_name() const { return vcs_name; }
 
-	EditorVersionControlActions *get_vcs_actions_panel() const { return vcs_actions; }
-	EditorVersionControlDock *get_vcs_dock() const { return vcs_dock; }
+	EditorVersionControlActions *get_version_control_actions_panel() const { return version_actions; }
+	EditorVersionControlDock *get_version_control_dock() const { return version_control_dock; }
+	EditorVersionCommitDock *get_version_commit_dock() const { return version_commit_dock; }
 
-	void set_vcs_name(String p_vcs_name) { vcs_name = p_vcs_name; }
+	void set_version_control_name(String p_vcs_name) { vcs_name = p_vcs_name; }
 
 	VersionControlEditorPlugin(EditorNode *p_node);
 	~VersionControlEditorPlugin();
 };
 
-#endif // VERSION_CONTROL_EDITOR_PLUGIN_H
+#endif // !VERSION_CONTROL_EDITOR_PLUGIN_H
