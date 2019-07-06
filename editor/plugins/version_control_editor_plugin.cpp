@@ -28,6 +28,7 @@ void EditorVersionControlActions::_bind_methods() {
 
 void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
+	WARN_PRINT((const char *)EditorVCSInterface::get_singleton()->get_vcs_name().c_str());
 	Size2 popup_size = Size2(450, 300);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
@@ -152,7 +153,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 	singleton = this;
 	editor_node = p_node;
 
-	EditorVCSInterface::vcs_interface = memnew(EditorVCSInterface());
+	EditorVCSInterface::singleton = memnew(EditorVCSInterface());
 
 	version_actions = memnew(EditorVersionControlActions);
 
@@ -165,7 +166,7 @@ VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
 	memdelete(version_actions);
 	memdelete(version_control_dock);
-	memdelete(EditorVCSInterface::vcs_interface);
+	memdelete(EditorVCSInterface::singleton);
 }
 
 EditorVersionCommitDock::~EditorVersionCommitDock() {

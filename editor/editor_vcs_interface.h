@@ -5,43 +5,40 @@
 #include "core/object.h"
 #include "editor/plugins/version_control_editor_plugin.h"
 
-class VCSAccessor : public Object {
+struct VCSInterface {
 
-	GDCLASS(VCSAccessor, Object)
+	void (*constructor)();
+	void (*destructor)();
 
-protected:
-	static void _bind_methods();
-
-public:
 	String (*get_vcs_name)();
 };
+
+extern VCSInterface *vcs_api_struct;
 
 class EditorVCSInterface : public Object {
 
 	GDCLASS(EditorVCSInterface, Object)
 
+	static EditorVCSInterface *singleton;
 	static EditorVCSInterface *vcs_interface;
-
+	
 	friend class VersionControlEditorPlugin;
 
 protected:
 	static void _bind_methods();
 
-	// VCS API Specifications
-	VCSAccessor *vcs_access;
-
 public:
-	static EditorVCSInterface *get_singleton() { return vcs_interface; }
-
-	void set_vcs_accessor(Node *p_accessor);
-
+	static EditorVCSInterface *get_singleton() { return singleton; }
+	static Node *get_singleton_node() { return (Node *)singleton; }
 	bool register_vcs_addon(String p_vcs_name);
+
+	void set_api_struct(Node *p_vcs_api_struct);
 	void set_version_control_dock(Node *p_vcs_control_dock);
 	void set_version_commit_dock(Node *p_vcs_commit_dock);
 	void set_version_control_name(String p_vcs_name);
 
 	// Exposed VCS access functions to editor
-	String get_vcs_name() { return vcs_access->get_vcs_name(); }
+	String get_vcs_name();
 	
 	EditorVCSInterface();
 	virtual ~EditorVCSInterface();
