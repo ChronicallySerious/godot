@@ -2,16 +2,30 @@
 
 EditorVCSInterface *EditorVCSInterface::vcs_interface;
 
+void VCSAccessor::_bind_methods() {
+}
+
 void EditorVCSInterface::_bind_methods() {
 
+	ClassDB::bind_method(D_METHOD("set_vcs_accessor", "accessor"), &EditorVCSInterface::set_vcs_accessor);
 	ClassDB::bind_method(D_METHOD("set_version_control_dock", "vcs_control_dock"), &EditorVCSInterface::set_version_control_dock);
 	ClassDB::bind_method(D_METHOD("set_version_commit_dock", "version_commit_dock"), &EditorVCSInterface::set_version_commit_dock);
 	ClassDB::bind_method(D_METHOD("set_version_control_name", "vcs_name"), &EditorVCSInterface::set_version_control_name);
 }
 
-String EditorVCSInterface::get_version_control_name() {
+void EditorVCSInterface::set_vcs_accessor(Node *p_accessor) {
 
-	return call("get_vcs_name");
+	vcs_access = Object::cast_to<VCSAccessor>(p_accessor);
+
+	if (!vcs_access) {
+
+		WARN_PRINT("VCS Accessor is set to NULL");
+	}
+}
+
+bool EditorVCSInterface::register_vcs_addon(String p_vcs_name) {
+
+	return VersionControlEditorPlugin::get_singleton()->register_as_available_vcs(p_vcs_name);
 }
 
 void EditorVCSInterface::set_version_control_dock(Node *p_vcs_control_dock) {

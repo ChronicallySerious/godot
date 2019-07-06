@@ -43,8 +43,7 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 
 		set_up_choice->add_item(available_vcs_names[i]);
 	}
-	set_up_choice->add_item(EditorVCSInterface::get_singleton()->get_version_control_name());
-
+	
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE, 0.8);
 
 }
@@ -132,7 +131,7 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
 }
 
-bool VersionControlEditorPlugin::register_vcs(const String &p_vcs_name) {
+bool VersionControlEditorPlugin::register_as_available_vcs(const String &p_vcs_name) {
 
 	if (available_vcs_names.find(p_vcs_name) != -1) {
 

@@ -89,7 +89,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
-	bool register_vcs(const String &p_vcs_name);
+	bool register_as_available_vcs(const String &p_vcs_name);
 
 	const Array &get_available_vcs_names() const { return available_vcs_names; }
 	const bool &get_is_vcs_intialised() const { return vcs_name == "" ? false : true; }
