@@ -6412,7 +6412,7 @@ EditorNode::EditorNode() {
 	raise_bottom_panel_item(AnimationPlayerEditor::singleton);
 
 	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
-	VersionControlEditorPlugin::get_singleton()->get_version_control_dock()->register_editor();
+	VersionControlEditorPlugin::get_singleton()->register_editor();
 
 	add_editor_plugin(memnew(ShaderEditorPlugin(this)));
 	add_editor_plugin(memnew(VisualShaderEditorPlugin(this)));

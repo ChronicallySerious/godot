@@ -48,17 +48,11 @@ class EditorVersionControlDock : public PanelContainer {
 	GDCLASS(EditorVersionControlDock, PanelContainer)
 
 protected:
-	static EditorVersionControlDock *singleton;
-
 	ToolButton *tool_button;
 
 	static void _bind_methods();
 
 public:
-	EditorVersionControlDock *register_editor();
-
-	static EditorVersionControlDock *get_singleton() { return singleton; }
-
 	void set_tool_button(ToolButton *p_button) { tool_button = p_button; }
 
 	EditorVersionControlDock();
@@ -89,6 +83,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
+	void register_editor();
 	bool register_as_available_vcs(const String &p_vcs_name);
 
 	const Array &get_available_vcs_names() const { return available_vcs_names; }
