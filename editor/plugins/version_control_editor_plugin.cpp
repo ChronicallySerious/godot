@@ -136,11 +136,12 @@ void VersionControlEditorPlugin::_bind_methods() {
 
 bool VersionControlEditorPlugin::register_as_available_vcs(const String &p_vcs_name) {
 
-	if (available_vcs_names.find(p_vcs_name) != -1) {
+	if (available_vcs_names.find(p_vcs_name) == -1) {
 
-		available_vcs_names.append(p_vcs_name);
+		available_vcs_names.push_back(p_vcs_name);
 		return true;
 	}
+	
 	return false;
 }
 

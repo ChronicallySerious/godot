@@ -18,7 +18,6 @@ protected:
 
 public:
 	static EditorVCSInterface *get_singleton() { return singleton; }
-	static bool register_vcs_addon(EditorVCSInterface * p_implementation, String p_vcs_name);
 
 	void set_version_control_dock(Node *p_vcs_control_dock);
 	void set_version_commit_dock(Node *p_vcs_commit_dock);

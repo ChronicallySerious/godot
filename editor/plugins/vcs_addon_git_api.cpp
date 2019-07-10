@@ -7,7 +7,8 @@ String GitAPI::get_vcs_name() {
 
 GitAPI::GitAPI() {
 
-	EditorVCSInterface::register_vcs_addon(this, get_vcs_name());
+	EditorVCSInterface::singleton = this;
+	VersionControlEditorPlugin::get_singleton()->register_as_available_vcs(get_vcs_name());
 }
 
 GitAPI::~GitAPI() {

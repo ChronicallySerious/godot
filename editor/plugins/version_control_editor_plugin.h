@@ -92,8 +92,8 @@ public:
 	bool register_as_available_vcs(const String &p_vcs_name);
 
 	const Array &get_available_vcs_names() const { return available_vcs_names; }
-	const bool &get_is_vcs_intialised() const { return vcs_name == "" ? false : true; }
-	const String &get_vcs_name() const { return vcs_name; }
+	const bool get_is_vcs_intialised() const { return vcs_name == "" ? false : true; }
+	const String get_vcs_name() const { return vcs_name; }
 
 	EditorVersionControlActions *get_version_control_actions_panel() const { return version_actions; }
 	EditorVersionControlDock *get_version_control_dock() const { return version_control_dock; }
