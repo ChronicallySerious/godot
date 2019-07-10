@@ -2,7 +2,7 @@
 #include "editor/editor_node.h"
 
 //temporary
-#include "editor/plugins/vcs_addon_git_api.h"
+#include "editor/plugins/vcs_addons/git/src/git_api.h"
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 

@@ -422,7 +422,7 @@ if selected_platform in platform_list:
         if (can_build):
             config.configure(env)
             env.module_list.append(x)
-            
+
             # Get doc classes paths (if present)
             try:
                 doc_classes = config.get_doc_classes()
