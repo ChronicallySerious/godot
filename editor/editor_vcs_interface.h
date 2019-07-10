@@ -9,17 +9,16 @@ class EditorVCSInterface : public Object {
 
 	GDCLASS(EditorVCSInterface, Object)
 
-	static EditorVCSInterface *singleton;
-	
-	friend class VersionControlEditorPlugin;
-
 protected:
+	static EditorVCSInterface *singleton;
+
 	static void _bind_methods();
+
+	friend class VersionControlEditorPlugin;
 
 public:
 	static EditorVCSInterface *get_singleton() { return singleton; }
-
-	bool register_vcs_addon(String p_vcs_name);
+	static bool register_vcs_addon(EditorVCSInterface * p_implementation, String p_vcs_name);
 
 	void set_version_control_dock(Node *p_vcs_control_dock);
 	void set_version_commit_dock(Node *p_vcs_commit_dock);

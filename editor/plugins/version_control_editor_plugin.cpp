@@ -1,6 +1,9 @@
 #include "version_control_editor_plugin.h"
 #include "editor/editor_node.h"
 
+//temporary
+#include "editor/plugins/vcs_addon_git_api.h"
+
 EditorVersionControlDock *EditorVersionControlDock::singleton = NULL;
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
@@ -28,7 +31,6 @@ void EditorVersionControlActions::_bind_methods() {
 
 void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
-	WARN_PRINT((const char *)EditorVCSInterface::get_singleton()->get_vcs_name().c_str());
 	Size2 popup_size = Size2(450, 300);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
@@ -45,7 +47,7 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 		set_up_choice->add_item(available_vcs_names[i]);
 	}
 	
-	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE, 0.8);
+	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 
 }
 
@@ -153,7 +155,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 	singleton = this;
 	editor_node = p_node;
 
-	EditorVCSInterface::singleton = memnew(EditorVCSInterface());
+	EditorVCSInterface::singleton = memnew(GitAPI);
 
 	version_actions = memnew(EditorVersionControlActions);
 

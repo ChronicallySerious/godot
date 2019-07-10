@@ -183,7 +183,7 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 	switch (vcs_actions_menu->get_item_id(p_idx)) {
 		case RUN_VCS_SETTINGS: {
 
-			 vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
+			vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
 }
@@ -6411,6 +6411,9 @@ EditorNode::EditorNode() {
 	//more visually meaningful to have this later
 	raise_bottom_panel_item(AnimationPlayerEditor::singleton);
 
+	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
+	VersionControlEditorPlugin::get_singleton()->get_version_control_dock()->register_editor();
+
 	add_editor_plugin(memnew(ShaderEditorPlugin(this)));
 	add_editor_plugin(memnew(VisualShaderEditorPlugin(this)));
 
@@ -6455,9 +6458,6 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(PhysicalBonePlugin(this)));
 	add_editor_plugin(memnew(MeshEditorPlugin(this)));
 	add_editor_plugin(memnew(MaterialEditorPlugin(this)));
-	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
-
-	VersionControlEditorPlugin::get_singleton()->get_version_control_dock()->register_editor();
 
 	for (int i = 0; i < EditorPlugins::get_plugin_count(); i++)
 		add_editor_plugin(EditorPlugins::create(i, this));
@@ -6643,7 +6643,7 @@ EditorNode::~EditorNode() {
 	memdelete(editor_plugins_force_input_forwarding);
 	memdelete(file_server);
 	memdelete(progress_hb);
-	
+
 	EditorSettings::destroy();
 }
 
