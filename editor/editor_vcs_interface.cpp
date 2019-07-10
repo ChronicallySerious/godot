@@ -1,16 +1,8 @@
 #include "editor_vcs_interface.h"
 
-EditorVCSInterface *EditorVCSInterface::singleton;
+EditorVCSInterface *EditorVCSInterface::singleton = NULL;
 
 void EditorVCSInterface::_bind_methods() {
-}
-
-bool EditorVCSInterface::register_vcs_addon(EditorVCSInterface *p_implementation, String p_vcs_name) {
-
-	singleton = p_implementation;
-	ERR_FAIL_NULL_V(singleton, false);
-
-	return VersionControlEditorPlugin::get_singleton()->register_as_available_vcs(p_vcs_name);
 }
 
 void EditorVCSInterface::set_version_control_dock(Node *p_vcs_control_dock) {
