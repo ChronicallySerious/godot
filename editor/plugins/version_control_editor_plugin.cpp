@@ -44,9 +44,8 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 
 		set_up_choice->add_item(available_vcs_names[i]);
 	}
-	
-	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 
+	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 }
 
 EditorVersionControlActions::EditorVersionControlActions() {
@@ -74,7 +73,6 @@ EditorVersionControlActions::EditorVersionControlActions() {
 
 	set_up_choice = memnew(OptionButton);
 	set_up_choice->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	set_up_choice->set_text(TTR("Select an available VCS"));
 	set_up_choice->connect("pressed", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
 }
@@ -144,6 +142,8 @@ void VersionControlEditorPlugin::_initialize_vcs(const String &p_vcs_name) {
 
 	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
 	vcs_name = p_vcs_name;
+
+	
 }
 
 VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {

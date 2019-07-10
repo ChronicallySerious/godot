@@ -21,8 +21,13 @@ void EditorVCSInterface::supply_editor_requirements(Node *p_vcs_control_dock, No
 
 String EditorVCSInterface::get_vcs_name() {
 
-	WARN_PRINT("No VCS Interface specified. Using stock responses.");
+	WARN_PRINT("No VCS Interface specified. Using stock responses for VCS info getters.");
 	return "";
+}
+
+Array EditorVCSInterface::get_git_remotes() {
+
+	return Array();
 }
 
 EditorVCSInterface::EditorVCSInterface() {

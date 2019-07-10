@@ -23,7 +23,8 @@ public:
 
 	// Exposed VCS access functions to editor
 	virtual String get_vcs_name();
-	
+	virtual Array get_git_remotes();
+
 	EditorVCSInterface();
 	virtual ~EditorVCSInterface();
 };
