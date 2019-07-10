@@ -4,8 +4,6 @@
 //temporary
 #include "editor/plugins/vcs_addon_git_api.h"
 
-EditorVersionControlDock *EditorVersionControlDock::singleton = NULL;
-
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
 void EditorVersionControlActions::_selected_a_vcs() {
@@ -64,7 +62,7 @@ EditorVersionControlActions::EditorVersionControlActions() {
 	set_up_ok_button = set_up_dialog->get_ok();
 	set_up_ok_button->set_disabled(true);
 	set_up_ok_button->set_text(TTR("Initialize Version Control"));
-	set_up_ok_button->connect("pressed", this, "_initialize_vcs");
+	set_up_ok_button->connect("pressed", VersionControlEditorPlugin::get_singleton(), "_initialize_vcs");
 
 	set_up_hbc = memnew(HBoxContainer);
 	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
@@ -114,15 +112,6 @@ EditorVersionControlActions::~EditorVersionControlActions() {
 void EditorVersionControlDock::_bind_methods() {
 }
 
-EditorVersionControlDock *EditorVersionControlDock::register_editor() {
-
-	singleton = this;
-	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), singleton);
-	singleton->set_tool_button(vc);
-
-	return singleton;
-}
-
 EditorVersionControlDock::EditorVersionControlDock() {
 }
 
@@ -132,6 +121,12 @@ EditorVersionControlDock::~EditorVersionControlDock() {
 void VersionControlEditorPlugin::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
+}
+
+void VersionControlEditorPlugin::register_editor() {
+
+	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), version_control_dock);
+	version_control_dock->set_tool_button(vc);
 }
 
 bool VersionControlEditorPlugin::register_as_available_vcs(const String &p_vcs_name) {

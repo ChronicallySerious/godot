@@ -19,9 +19,7 @@ protected:
 public:
 	static EditorVCSInterface *get_singleton() { return singleton; }
 
-	void set_version_control_dock(Node *p_vcs_control_dock);
-	void set_version_commit_dock(Node *p_vcs_commit_dock);
-	void set_version_control_name(String p_vcs_name);
+	void supply_editor_requirements(Node *p_vcs_control_dock, Node *p_vcs_commit_dock, String p_vcs_name);
 
 	// Exposed VCS access functions to editor
 	virtual String get_vcs_name();
