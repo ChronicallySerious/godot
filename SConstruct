@@ -140,6 +140,7 @@ opts.Add(BoolVariable('builtin_certs', "Bundle default SSL certificates to be us
 opts.Add(BoolVariable('builtin_enet', "Use the built-in ENet library", True))
 opts.Add(BoolVariable('builtin_freetype', "Use the built-in FreeType library", True))
 opts.Add(BoolVariable('builtin_libogg', "Use the built-in libogg library", True))
+opts.Add(BoolVariable('builtin_libgit2', "Use the built-in libgit2 library", True))
 opts.Add(BoolVariable('builtin_libpng', "Use the built-in libpng library", True))
 opts.Add(BoolVariable('builtin_libtheora', "Use the built-in libtheora library", True))
 opts.Add(BoolVariable('builtin_libvorbis', "Use the built-in libvorbis library", True))

@@ -4,8 +4,6 @@
 #include "editor/editor_vcs_interface.h"
 
 extern "C" {
-
-#include "editor/plugins/vcs_addons/git/libgit2/include/git2.h"
 }
 
 class GitAPI : public EditorVCSInterface {
