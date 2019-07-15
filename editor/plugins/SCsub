@@ -4,13 +4,6 @@ Import('env')
 import fnmatch
 import os
 
-def RecursiveGlob(pathname):
-    matches = []
-    for root, dirnames, filenames in os.walk(pathname):
-        for filename in fnmatch.filter(filenames, '*.c'):
-            matches.append(File(os.path.join(root, filename)))
-
-    return matches
-
 env.add_source_files(env.editor_sources, "*.cpp")
-env.add_source_files(env.editor_sources, RecursiveGlob("vcs_addons/"))
+
+SConscript("vcs_addons/SCsub")
