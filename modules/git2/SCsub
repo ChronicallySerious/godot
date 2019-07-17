@@ -8,12 +8,11 @@ env_git2 = env_modules.Clone()
 # Thirdparty source files
 if env['builtin_libgit2']:
     thirdparty_dir = "#thirdparty/libgit2/"
-    thirdparty_sources = [
+
+    git2_sources = [
+        # libgit2 dependencies
         "deps/http-parser/http_parser.c",
-        "deps/regex/regcomp.c",
         "deps/regex/regex.c",
-        "deps/regex/regexec.c",
-        "deps/regex/regex_internal.c",
         "deps/zlib/adler32.c",
         "deps/zlib/crc32.c",
         "deps/zlib/deflate.c",
@@ -23,6 +22,8 @@ if env['builtin_libgit2']:
         "deps/zlib/inftrees.c",
         "deps/zlib/trees.c",
         "deps/zlib/zutil.c",
+
+        # libgit2 source
         "src/alloc.c",
         "src/annotated_commit.c",
         "src/apply.c",
@@ -145,10 +146,6 @@ if env['builtin_libgit2']:
         "src/worktree.c",
         "src/zstream.c",
         "src/hash/hash_generic.c",
-        "src/hash/hash_mbedtls.c",
-        "src/hash/hash_win32.c",
-        "src/hash/sha1dc/sha1.c",
-        "src/hash/sha1dc/ubc_check.c",
         "src/streams/mbedtls.c",
         "src/streams/openssl.c",
         "src/streams/registry.c",
@@ -191,15 +188,24 @@ if env['builtin_libgit2']:
         "src/xdiff/xutils.c"
     ]
 
-    thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
+    thirdparty_sources = [thirdparty_dir + file for file in git2_sources]
 
-    env_git2.Prepend(CPPPATH=[thirdparty_dir])
-    env_git2.Append(LIBPATH=['#thirdparty/libgit2/'])
-    env_git2.Append(LIBS=['git2'])
+    git2_include_paths = [
+        'include/',
+        'src/',
+        'src/hash/',
+        'deps/http-parser/',
+        'deps/regex/',
+        'deps/zlib/'
+    ]
+    git2_full_include_paths = [thirdparty_dir + file for file in git2_include_paths]
+
+    env_git2.Prepend(CPPPATH=[git2_full_include_paths])
+    env_git2.Append(CPPFLAGS=['-DNO_VIZ', '-DSTDC', '-DNO_GZIP'])
 
     env_thirdparty = env_git2.Clone()
     env_thirdparty.disable_warnings()
-    # env_thirdparty.add_source_files(env.modules_sources, thirdparty_sources)
+    env_thirdparty.add_source_files(env.modules_sources, thirdparty_sources)
 
 # Godot's own source files
 env_git2.add_source_files(env.modules_sources, "*.cpp")
