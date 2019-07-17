@@ -61,6 +61,7 @@ if env['builtin_libgit2']:
         "src/diff_stats.c",
         "src/diff_tform.c",
         "src/diff_xdiff.c",
+        "src/errors.c",
         "src/fetch.c",
         "src/fetchhead.c",
         "src/filebuf.c",
