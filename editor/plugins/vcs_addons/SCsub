@@ -4,9 +4,12 @@ Import('env')
 import fnmatch
 import os
 
-env.add_source_files(env.editor_sources, "git/src/git_api.cpp")
+git_api_sources = [
+    'git/src/git_api.cpp'
+]
+
+env.add_source_files(env.editor_sources, git_api_sources)
 env.Append(LIBPATH=['#thirdparty/libgit2/'])
 env.Append(LIBS=['git2'])
 env.Append(LIBS=['http-parser'])
 env.Append(LIBS=['git2internal'])
-env.Append(LIBS=[''])
