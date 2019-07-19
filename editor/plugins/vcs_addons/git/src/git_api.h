@@ -3,8 +3,7 @@
 
 #include "editor/editor_vcs_interface.h"
 
-extern "C" {
-}
+#include "thirdparty/libgit2/include/git2.h"
 
 class GitAPI : public EditorVCSInterface {
 

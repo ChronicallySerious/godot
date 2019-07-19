@@ -10,7 +10,7 @@
 /* #undef GIT_ARCH_32 */
 
 /* #undef GIT_USE_ICONV */
-#define GIT_USE_NSEC 1
+#undef GIT_USE_NSEC
 /* #undef GIT_USE_STAT_MTIM */
 /* #undef GIT_USE_STAT_MTIMESPEC */
 /* #undef GIT_USE_STAT_MTIME_NSEC */
@@ -21,7 +21,7 @@
 /* #undef GIT_SSH_MEMORY_CREDENTIALS */
 
 /* #undef GIT_GSSAPI */
-#define GIT_WINHTTP 1
+#undef GIT_WINHTTP
 
 #define GIT_HTTPS 1
 /* #undef GIT_OPENSSL */
@@ -30,7 +30,7 @@
 
 // -- GODOT start
 // Godot doesn't require CollisionDetection (the SHA1 backend)
-#undef GIT_SHA1_COLLISIONDETECT 1
+/* #undef GIT_SHA1_COLLISIONDETECT */
 // -- GODOT end
 /* #undef GIT_SHA1_WIN32 */
 /* #undef GIT_SHA1_COMMON_CRYPTO */

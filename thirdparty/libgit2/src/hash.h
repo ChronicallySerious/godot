@@ -30,9 +30,10 @@ void git_hash_ctx_cleanup(git_hash_ctx *ctx);
 #else
 # include "hash/hash_generic.h"
 #endif
-
-int git_hash_global_init(void);
-
+// -- GODOT start
+// int git_hash_global_init(void);
+static int git_hash_global_init(void);
+// -- GODOT end
 typedef struct {
 	void *data;
 	size_t len;
