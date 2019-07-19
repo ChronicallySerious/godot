@@ -1,3 +1,5 @@
+// -- GODOT start
+// This config file was made for Godot to let Scons perform a zero-dependency build of libgit2
 #ifndef INCLUDE_features_h__
 #define INCLUDE_features_h__
 
@@ -28,13 +30,11 @@
 /* #undef GIT_SECURE_TRANSPORT */
 /* #undef GIT_MBEDTLS */
 
-// -- GODOT start
-// Godot doesn't require CollisionDetection (the SHA1 backend)
 /* #undef GIT_SHA1_COLLISIONDETECT */
-// -- GODOT end
 /* #undef GIT_SHA1_WIN32 */
 /* #undef GIT_SHA1_COMMON_CRYPTO */
 /* #undef GIT_SHA1_OPENSSL */
 /* #undef GIT_SHA1_MBEDTLS */
 
 #endif
+// -- GODOT end

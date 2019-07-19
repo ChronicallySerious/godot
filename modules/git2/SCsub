@@ -9,7 +9,7 @@ env_git2 = env_modules.Clone()
 if env['builtin_libgit2']:
     thirdparty_dir = "#thirdparty/libgit2/"
 
-    git2_sources = [
+    git2_win_sources = [
         # libgit2 dependencies
         "deps/http-parser/http_parser.c",
         "deps/regex/regex.c",
@@ -189,7 +189,7 @@ if env['builtin_libgit2']:
         "src/xdiff/xutils.c"
     ]
 
-    git2_sources = [
+    git2_linux_sources = [
         "deps/zlib/trees.c",
         "deps/zlib/crc32.c",
         "deps/zlib/inflate.c",
@@ -371,7 +371,7 @@ if env['builtin_libgit2']:
         "src/refs.c",
     ]
 
-    thirdparty_sources = [thirdparty_dir + file for file in git2_sources]
+    thirdparty_sources = [thirdparty_dir + file for file in git2_win_sources]
 
     git2_include_paths = [
         'include/',
