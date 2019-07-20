@@ -19,15 +19,26 @@ void EditorVCSInterface::supply_editor_requirements(Node *p_vcs_control_dock, No
 	ERR_FAIL_COND(p_vcs_name == "");
 }
 
-String EditorVCSInterface::get_vcs_name() {
+bool EditorVCSInterface::initialise(String p_project_root_path) {
 
-	WARN_PRINT("No VCS Interface specified. Using stock responses for VCS info getters.");
+	// Editor shouldn't be calling this definition. Using this implies that there is no VCS interaction present
+	WARN_PRINT("No VCS Interface specified. Using stock responses for VCS info getters. This warning is now suppressed.");
 	return "";
 }
 
-Array EditorVCSInterface::get_git_remotes() {
+bool EditorVCSInterface::shutdown() {
 
-	return Array();
+	return false;
+}
+
+String EditorVCSInterface::get_project_name() {
+
+	return String();
+}
+
+String EditorVCSInterface::get_vcs_name() {
+
+	return "";
 }
 
 EditorVCSInterface::EditorVCSInterface() {

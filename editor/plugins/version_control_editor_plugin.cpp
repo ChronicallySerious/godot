@@ -6,10 +6,10 @@
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
-void EditorVersionControlActions::_selected_a_vcs() {
+void EditorVersionControlActions::_selected_a_vcs(int p_id) {
 
 	const Array &available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
-	const String &selected_vcs = set_up_choice->get_text();
+	const String &selected_vcs = set_up_choice->get_item_text(p_id);
 
 	if (available_vcs_names.find(selected_vcs) != -1) {
 
@@ -23,8 +23,25 @@ void EditorVersionControlActions::_selected_a_vcs() {
 void EditorVersionControlActions::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &EditorVersionControlActions::_selected_a_vcs);
-
+	ClassDB::bind_method(D_METHOD("_initialise_vcs", "vcs_name"), &EditorVersionControlActions::_initialise_vcs);
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &EditorVersionControlActions::popup_vcs_set_up_dialog);
+}
+
+void EditorVersionControlActions::_append_names_to_list() {
+
+	static bool called = false;
+
+	if (!called) {
+
+		set_up_choice->add_item("Select an available VCS");
+		Array available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
+		for (int i = 0; i < available_vcs_names.size(); i++) {
+
+			set_up_choice->add_item(available_vcs_names[i]);
+		}
+
+		called = true;
+	}
 }
 
 void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_base) {
@@ -39,13 +56,18 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 		set_up_ok_button->set_disabled(true);
 	}
 
-	Array available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
-	for (int i = 0; i < available_vcs_names.size(); i++) {
-
-		set_up_choice->add_item(available_vcs_names[i]);
-	}
+	_append_names_to_list();
 
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
+}
+
+void EditorVersionControlActions::_initialise_vcs() {
+
+	WARN_PRINT("nit");
+	String res_dir = OS::get_singleton()->get_resource_dir();
+	if (!EditorVCSInterface::get_singleton()->initialise(res_dir)) {
+		WARN_PRINT("VCS is not initialised");
+	}
 }
 
 EditorVersionControlActions::EditorVersionControlActions() {
@@ -55,13 +77,12 @@ EditorVersionControlActions::EditorVersionControlActions() {
 	set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
 	add_child(set_up_dialog);
 
-	set_up_vbc = memnew(VBoxContainer);
-	set_up_dialog->add_child(set_up_vbc);
-
 	set_up_ok_button = set_up_dialog->get_ok();
 	set_up_ok_button->set_disabled(true);
 	set_up_ok_button->set_text(TTR("Initialize Version Control"));
-	set_up_ok_button->connect("pressed", VersionControlEditorPlugin::get_singleton(), "_initialize_vcs");
+
+	set_up_vbc = memnew(VBoxContainer);
+	set_up_dialog->add_child(set_up_vbc);
 
 	set_up_hbc = memnew(HBoxContainer);
 	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
@@ -73,7 +94,7 @@ EditorVersionControlActions::EditorVersionControlActions() {
 
 	set_up_choice = memnew(OptionButton);
 	set_up_choice->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	set_up_choice->connect("pressed", this, "_selected_a_vcs");
+	set_up_choice->connect("item_selected", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
 }
 
@@ -115,10 +136,8 @@ EditorVersionControlDock::EditorVersionControlDock() {
 
 EditorVersionControlDock::~EditorVersionControlDock() {
 }
-
+	
 void VersionControlEditorPlugin::_bind_methods() {
-
-	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
 }
 
 void VersionControlEditorPlugin::register_editor() {
@@ -138,22 +157,16 @@ bool VersionControlEditorPlugin::register_as_available_vcs(const String &p_vcs_n
 	return false;
 }
 
-void VersionControlEditorPlugin::_initialize_vcs(const String &p_vcs_name) {
-
-	EditorSettings::get_singleton()->set_project_metadata("vcs", "name", p_vcs_name);
-	vcs_name = p_vcs_name;
-
-	
-}
-
 VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 
 	singleton = this;
 	editor_node = p_node;
 
+	//temporary
 	EditorVCSInterface::singleton = memnew(GitAPI);
 
 	version_actions = memnew(EditorVersionControlActions);
+	version_actions->set_up_dialog->get_ok()->connect("pressed", this, "_initialise_vcs");
 
 	version_control_dock = memnew(EditorVersionControlDock);
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);

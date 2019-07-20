@@ -16,7 +16,11 @@ class EditorVersionControlActions : public PopupMenu {
 	OptionButton *set_up_choice;
 	Button *set_up_ok_button;
 
-	void _selected_a_vcs();
+	void _append_names_to_list();
+	void _selected_a_vcs(int p_id);
+	void _initialise_vcs();
+
+	friend class VersionControlEditorPlugin;
 
 protected:
 	static void _bind_methods();
@@ -74,11 +78,10 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	EditorNode *editor_node;
 
-	void _initialize_vcs(const String &p_vcs_name);
-
 	static void _bind_methods();
 
 	friend class EditorVCSInterface;
+	friend class EditorVersionControlActions;
 
 public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
