@@ -2,7 +2,7 @@
 #define GIT_API_H
 
 #include "editor/editor_vcs_interface.h"
-
+#include "scene/gui/check_button.h"
 #include "thirdparty/libgit2/include/git2.h"
 
 #define GIT2_CALL(m_libgit2_function, m_fail_return) { \
