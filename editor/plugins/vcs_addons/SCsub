@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 Import('env')
-import fnmatch
-import os
 
 git_api_sources = [
     'git/src/git_api.cpp'

@@ -371,7 +371,10 @@ if env['builtin_libgit2']:
         "src/refs.c",
     ]
 
-    thirdparty_sources = [thirdparty_dir + file for file in git2_win_sources]
+    if env["platform"] == "windows":
+        thirdparty_sources = [thirdparty_dir + file for file in git2_win_sources]
+    elif env["platform"] == "x11":
+        thirdparty_sources = [thirdparty_dir + file for file in git2_linux_sources]
 
     git2_include_paths = [
         'include/',
@@ -385,7 +388,6 @@ if env['builtin_libgit2']:
 
     env_git2.Prepend(CPPPATH=[git2_full_include_paths])
     env_git2.Prepend(CPPPATH=['#thirdparty/mbedtls/include'])
-    env_git2.Append(CFLAGS=['-fPIC'])
 
     env_thirdparty = env_git2.Clone()
     env_thirdparty.disable_warnings()
