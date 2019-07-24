@@ -22,10 +22,11 @@ public:
 	void supply_editor_requirements(Node *p_vcs_control_dock, Node *p_vcs_commit_dock, String p_vcs_name);
 
 	// Exposed VCS access functions to editor
-	virtual bool initialise(String p_project_root_path);
+	virtual bool initialize(String p_project_root_path);
 	virtual bool shutdown();
 	virtual String get_project_name();
 	virtual String get_vcs_name();
+	virtual Node *get_init_settings();
 
 	EditorVCSInterface();
 	virtual ~EditorVCSInterface();

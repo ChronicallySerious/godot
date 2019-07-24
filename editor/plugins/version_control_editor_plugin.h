@@ -14,11 +14,12 @@ class EditorVersionControlActions : public PopupMenu {
 	HBoxContainer *set_up_hbc;
 	Label *set_up_vcs_label;
 	OptionButton *set_up_choice;
+	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
 	void _append_names_to_list();
 	void _selected_a_vcs(int p_id);
-	void _initialise_vcs();
+	void _initialize_vcs();
 
 	friend class VersionControlEditorPlugin;
 
@@ -72,7 +73,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	Array available_vcs_names;
 	String vcs_name;
 
-	EditorVersionControlActions *version_actions;
+	EditorVersionControlActions *version_control_actions;
 	EditorVersionControlDock *version_control_dock;
 	EditorVersionCommitDock *version_commit_dock;
 
@@ -90,10 +91,10 @@ public:
 	bool register_as_available_vcs(const String &p_vcs_name);
 
 	const Array &get_available_vcs_names() const { return available_vcs_names; }
-	const bool get_is_vcs_intialised() const { return vcs_name == "" ? false : true; }
+	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }
 	const String get_vcs_name() const { return vcs_name; }
 
-	EditorVersionControlActions *get_version_control_actions_panel() const { return version_actions; }
+	EditorVersionControlActions *get_version_control_actions_panel() const { return version_control_actions; }
 	EditorVersionControlDock *get_version_control_dock() const { return version_control_dock; }
 	EditorVersionCommitDock *get_version_commit_dock() const { return version_commit_dock; }
 
