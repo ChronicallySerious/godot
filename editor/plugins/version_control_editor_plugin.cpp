@@ -1,9 +1,6 @@
 #include "version_control_editor_plugin.h"
 #include "editor/editor_node.h"
 
-//temporary
-#include "editor/plugins/vcs_addons/git/src/git_api.h"
-
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
 void EditorVersionControlActions::_selected_a_vcs(int p_id) {
@@ -15,11 +12,10 @@ void EditorVersionControlActions::_selected_a_vcs(int p_id) {
 
 		set_up_init_button->set_disabled(false);
 	} else {
-
+		
 		set_up_init_button->set_disabled(true);
 	}
-
-	set_up_vcs_label->add_child(EditorVCSInterface::get_singleton()->get_init_settings());
+	set_up_vcs_label->add_child(EditorVCSInterface::get_singleton()->call("get_initialization_settings_panel_container"));
 }
 
 void EditorVersionControlActions::_bind_methods() {
@@ -30,13 +26,20 @@ void EditorVersionControlActions::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &EditorVersionControlActions::popup_vcs_set_up_dialog);
 }
 
-void EditorVersionControlActions::_append_names_to_list() {
+void EditorVersionControlActions::_populate_available_vcs_names() {
 
 	static bool called = false;
 
 	if (!called) {
 
 		set_up_choice->add_item("Select an available VCS");
+
+		List<StringName> children;
+		ClassDB::get_inheriters_from_class("EditorVCSInterface", &children);
+
+		Variant addon;
+		Variant::construct_from_string(children[0], addon);
+
 		Array available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
 		for (int i = 0; i < available_vcs_names.size(); i++) {
 
@@ -59,7 +62,7 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 		set_up_init_button->set_disabled(true);
 	}
 
-	_append_names_to_list();
+	_populate_available_vcs_names();
 
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 }
@@ -67,7 +70,7 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 void EditorVersionControlActions::_initialize_vcs() {
 
 	String res_dir = OS::get_singleton()->get_resource_dir();
-	if (!EditorVCSInterface::get_singleton()->initialize(res_dir)) {
+	if (!EditorVCSInterface::get_singleton()->call("initialize", res_dir)) {
 
 		ERR_FAIL();
 	}
@@ -155,7 +158,7 @@ void VersionControlEditorPlugin::register_editor() {
 	version_control_dock->set_tool_button(vc);
 }
 
-bool VersionControlEditorPlugin::register_as_available_vcs(const String &p_vcs_name) {
+bool VersionControlEditorPlugin::add_available_vcs_name(const String &p_vcs_name) {
 
 	if (available_vcs_names.find(p_vcs_name) == -1) {
 
@@ -171,9 +174,6 @@ VersionControlEditorPlugin::VersionControlEditorPlugin(EditorNode *p_node) {
 	singleton = this;
 	editor_node = p_node;
 
-	//temporary
-	EditorVCSInterface::singleton = memnew(GitAPI);
-
 	version_control_actions = memnew(EditorVersionControlActions);
 	version_control_actions->set_up_dialog->get_ok()->connect("pressed", this, "_initialize_vcs");
 
@@ -186,7 +186,6 @@ VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
 	memdelete(version_control_actions);
 	memdelete(version_control_dock);
-	memdelete(EditorVCSInterface::singleton);
 }
 
 EditorVersionCommitDock::~EditorVersionCommitDock() {

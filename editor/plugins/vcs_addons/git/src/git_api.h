@@ -2,6 +2,7 @@
 #define GIT_API_H
 
 #include "editor/editor_vcs_interface.h"
+#include "scene/gui/box_container.h"
 #include "scene/gui/check_button.h"
 #include "thirdparty/libgit2/include/git2.h"
 
@@ -12,7 +13,7 @@
 		WARN_PRINT(e->message);                        \
         return m_fail_return;                          \
     }                                                  \
-}
+}													   \
 
 class GitAPI : public EditorVCSInterface {
 
@@ -30,10 +31,10 @@ protected:
 
 public:
 	bool initialize(String p_git_path) override;
-	bool shutdown() override;
+	bool shut_down() override;
 	String get_project_name() override;
 	String get_vcs_name() override;
-	Node *get_init_settings() override;
+	Control *get_initialization_settings_panel_container() override;
 
 	void _construct_init_ui();
 

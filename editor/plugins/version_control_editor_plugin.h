@@ -17,7 +17,7 @@ class EditorVersionControlActions : public PopupMenu {
 	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
-	void _append_names_to_list();
+	void _populate_available_vcs_names();
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
 
@@ -88,7 +88,7 @@ public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
 	void register_editor();
-	bool register_as_available_vcs(const String &p_vcs_name);
+	bool add_available_vcs_name(const String &p_vcs_name);
 
 	const Array &get_available_vcs_names() const { return available_vcs_names; }
 	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }

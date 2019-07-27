@@ -1,22 +1,17 @@
 #include "editor_vcs_interface.h"
 
-EditorVCSInterface *EditorVCSInterface::singleton = NULL;
+Node *EditorVCSInterface::singleton = NULL;
 
 void EditorVCSInterface::_bind_methods() {
-}
 
-void EditorVCSInterface::supply_editor_requirements(Node *p_vcs_control_dock, Node *p_vcs_commit_dock, String p_vcs_name) {
+	ClassDB::bind_method(D_METHOD("initialize", "project_root_path"), &EditorVCSInterface::initialize);;
+	ClassDB::bind_method(D_METHOD("get_vcs_name"), &EditorVCSInterface::get_vcs_name);
+	ClassDB::bind_method(D_METHOD("shut_down"), &EditorVCSInterface::shut_down);
+	ClassDB::bind_method(D_METHOD("get_project_name"), &EditorVCSInterface::get_project_name);
+	ClassDB::bind_method(D_METHOD("submit_vcs_addon", "addon"), &EditorVCSInterface::submit_vcs_addon);
 
-	EditorVersionControlDock *version_control_dock = VersionControlEditorPlugin::get_singleton()->get_version_control_dock();
-	version_control_dock = Object::cast_to<EditorVersionControlDock>(p_vcs_control_dock);
-	ERR_FAIL_NULL(version_control_dock);
-
-	EditorVersionCommitDock *version_commit_dock = VersionControlEditorPlugin::get_singleton()->get_version_commit_dock();
-	version_commit_dock = Object::cast_to<EditorVersionCommitDock>(p_vcs_commit_dock);
-	ERR_FAIL_NULL(version_commit_dock);
-
-	VersionControlEditorPlugin::get_singleton()->set_version_control_name(p_vcs_name);
-	ERR_FAIL_COND(p_vcs_name == "");
+	BIND_VMETHOD(MethodInfo("get_initialization_settings_panel_container"));
+	BIND_VMETHOD(MethodInfo("get_commit_dock_panel_container"));
 }
 
 bool EditorVCSInterface::initialize(String p_project_root_path) {
@@ -27,9 +22,25 @@ bool EditorVCSInterface::initialize(String p_project_root_path) {
 	return "";
 }
 
-bool EditorVCSInterface::shutdown() {
+Control *EditorVCSInterface::get_initialization_settings_panel_container() {
+
+	return NULL;
+}
+
+Control *EditorVCSInterface::get_commit_dock_panel_container() {
+
+	return NULL;
+}
+
+bool EditorVCSInterface::shut_down() {
 
 	return false;
+}
+
+void EditorVCSInterface::submit_vcs_addon(Node *p_addon) {
+
+	WARN_PRINT("received submit");
+	singleton = p_addon;
 }
 
 String EditorVCSInterface::get_project_name() {
@@ -40,11 +51,6 @@ String EditorVCSInterface::get_project_name() {
 String EditorVCSInterface::get_vcs_name() {
 
 	return "";
-}
-
-Node *EditorVCSInterface::get_init_settings() {
-
-	return nullptr;
 }
 
 EditorVCSInterface::EditorVCSInterface() {

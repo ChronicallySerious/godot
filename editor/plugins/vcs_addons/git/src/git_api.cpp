@@ -14,7 +14,7 @@ bool GitAPI::initialize(String p_git_path) {
 	return true;
 }
 
-bool GitAPI::shutdown() {
+bool GitAPI::shut_down() {
 
 	return git_libgit2_shutdown() == 0;
 }
@@ -29,9 +29,9 @@ String GitAPI::get_vcs_name() {
 	return "Git";
 }
 
-Node *GitAPI::get_init_settings() {
+Control *GitAPI::get_initialization_settings_panel_container() {
 
-	return init_settings;
+	return memnew(Button);
 }
 
 void GitAPI::_construct_init_ui() {
@@ -53,8 +53,6 @@ GitAPI::GitAPI() {
 	walker = NULL;
 
 	_construct_init_ui();
-
-	VersionControlEditorPlugin::get_singleton()->register_as_available_vcs(get_vcs_name());
 
 	if (git_libgit2_init() > 1) {
 

@@ -3,33 +3,33 @@
 
 #include "core/ustring.h"
 #include "core/object.h"
-#include "editor/plugins/version_control_editor_plugin.h"
+#include "scene/main/node.h"
 
-class EditorVCSInterface : public Object {
+class EditorVCSInterface : public Node {
 
-	GDCLASS(EditorVCSInterface, Object)
+	GDCLASS(EditorVCSInterface, Node)
 
 protected:
-	static EditorVCSInterface *singleton;
+	static Node *singleton;
 
 	static void _bind_methods();
 
 	friend class VersionControlEditorPlugin;
 
-public:
-	static EditorVCSInterface *get_singleton() { return singleton; }
-
-	void supply_editor_requirements(Node *p_vcs_control_dock, Node *p_vcs_commit_dock, String p_vcs_name);
-
-	// Exposed VCS access functions to editor
-	virtual bool initialize(String p_project_root_path);
-	virtual bool shutdown();
-	virtual String get_project_name();
-	virtual String get_vcs_name();
-	virtual Node *get_init_settings();
-
 	EditorVCSInterface();
 	virtual ~EditorVCSInterface();
+
+public:
+	static Node *get_singleton() { return singleton; }
+	
+	// Exposing these functions to the editor for use, and for the GDNative addons to implement
+	virtual bool initialize(String p_project_root_path);
+	virtual Control *get_initialization_settings_panel_container();
+	virtual Control *get_commit_dock_panel_container();
+	virtual bool shut_down();
+	virtual void submit_vcs_addon(Node *p_addon);
+	virtual String get_project_name();
+	virtual String get_vcs_name();
 };
 
 #endif // !EDITOR_VCS_INTERFACE_H
