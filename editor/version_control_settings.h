@@ -17,7 +17,7 @@ class VersionControlSettings : public VBoxContainer {
 
 public:
 	static String get_vcs_name() { return VersionControlEditorPlugin::get_singleton()->get_vcs_name(); }
-	static Array get_available_vcs_names() { return VersionControlEditorPlugin::get_singleton()->get_available_vcs_names(); }
+	static List<StringName> get_available_vcs_names() { return VersionControlEditorPlugin::get_singleton()->get_available_vcs_names(); }
 	static bool get_is_vcs_intialized() { return VersionControlEditorPlugin::get_singleton()->get_is_vcs_intialized(); }
 
 	static void set_version_control_name(String p_vcs_name) { VersionControlEditorPlugin::get_singleton()->set_version_control_name(p_vcs_name); }

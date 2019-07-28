@@ -14,6 +14,7 @@ class EditorVersionControlActions : public PopupMenu {
 	HBoxContainer *set_up_hbc;
 	Label *set_up_vcs_label;
 	OptionButton *set_up_choice;
+	PanelContainer *set_up_init_settings;
 	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
@@ -70,7 +71,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	static VersionControlEditorPlugin *singleton;
 
-	Array available_vcs_names;
+	List<StringName> available_vcs_names;
 	String vcs_name;
 
 	EditorVersionControlActions *version_control_actions;
@@ -88,9 +89,9 @@ public:
 	static VersionControlEditorPlugin *get_singleton() { return singleton; }
 
 	void register_editor();
-	bool add_available_vcs_name(const String &p_vcs_name);
+	void fetch_available_vcs_addon_names();
 
-	const Array &get_available_vcs_names() const { return available_vcs_names; }
+	List<StringName> get_available_vcs_names() const { return available_vcs_names; }
 	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }
 	const String get_vcs_name() const { return vcs_name; }
 

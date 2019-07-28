@@ -5,12 +5,12 @@
 #include "core/object.h"
 #include "scene/main/node.h"
 
-class EditorVCSInterface : public Node {
+class EditorVCSInterface : public Object {
 
-	GDCLASS(EditorVCSInterface, Node)
+	GDCLASS(EditorVCSInterface, Object)
 
 protected:
-	static Node *singleton;
+	static Object *singleton;
 
 	static void _bind_methods();
 
@@ -20,14 +20,14 @@ protected:
 	virtual ~EditorVCSInterface();
 
 public:
-	static Node *get_singleton() { return singleton; }
-	
+	static Object *get_singleton();
+	static void set_singleton(Object *p_singleton);
+
 	// Exposing these functions to the editor for use, and for the GDNative addons to implement
 	virtual bool initialize(String p_project_root_path);
 	virtual Control *get_initialization_settings_panel_container();
 	virtual Control *get_commit_dock_panel_container();
 	virtual bool shut_down();
-	virtual void submit_vcs_addon(Node *p_addon);
 	virtual String get_project_name();
 	virtual String get_vcs_name();
 };
