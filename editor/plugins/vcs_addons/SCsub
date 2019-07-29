@@ -1,9 +1,0 @@
-#!/usr/bin/env python
-
-Import('env')
-
-git_api_sources = [
-    'git/src/git_api.cpp'
-]
-
-env.add_source_files(env.editor_sources, git_api_sources)

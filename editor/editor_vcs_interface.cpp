@@ -9,8 +9,8 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("shut_down"), &EditorVCSInterface::shut_down);
 	ClassDB::bind_method(D_METHOD("get_project_name"), &EditorVCSInterface::get_project_name);
 
-	BIND_VMETHOD(MethodInfo("get_initialization_settings_panel_container"));
-	BIND_VMETHOD(MethodInfo("get_commit_dock_panel_container"));
+	ClassDB::bind_method(D_METHOD("get_initialization_settings_panel_container"), &EditorVCSInterface::get_initialization_settings_panel_container);
+	ClassDB::bind_method(D_METHOD("get_commit_dock_panel_container"), &EditorVCSInterface::get_commit_dock_panel_container);
 }
 
 bool EditorVCSInterface::initialize(String p_project_root_path) {
@@ -19,12 +19,12 @@ bool EditorVCSInterface::initialize(String p_project_root_path) {
 	return "";
 }
 
-Control *EditorVCSInterface::get_initialization_settings_panel_container() {
+Variant EditorVCSInterface::get_initialization_settings_panel_container() {
 
 	return NULL;
 }
 
-Control *EditorVCSInterface::get_commit_dock_panel_container() {
+Variant EditorVCSInterface::get_commit_dock_panel_container() {
 
 	return NULL;
 }
@@ -56,9 +56,6 @@ Object *EditorVCSInterface::get_singleton() {
 
 		return singleton;
 	}
-
-	// Only for default behaviour. Singleton is overridden by GDNative addons
-	singleton = memnew(EditorVCSInterface);
 
 	return singleton;
 }

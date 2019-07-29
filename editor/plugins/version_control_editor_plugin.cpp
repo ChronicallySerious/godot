@@ -17,11 +17,6 @@ void EditorVersionControlActions::_selected_a_vcs(int p_id) {
 		
 		set_up_init_button->set_disabled(true);
 	}
-
-	// Delete the already in use panel
-	memdelete(set_up_init_settings);
-	// Replace it with new one
-	set_up_init_settings = reinterpret_cast<PanelContainer *>(&EditorVCSInterface::get_singleton()->call("get_initialization_settings_panel_container"));
 }
 
 void EditorVersionControlActions::_bind_methods() {
@@ -70,14 +65,48 @@ void EditorVersionControlActions::popup_vcs_set_up_dialog(const Control *p_gui_b
 
 void EditorVersionControlActions::_initialize_vcs() {
 
-	Resource *addon = ResourceCache::get("res://git_api.gdnlib");
+	int id = set_up_choice->get_selected_id();
+	String selected_addon = set_up_choice->get_item_text(id);
 
-	EditorVCSInterface::set_singleton(static_cast<Object *>(addon));
+	String path = ScriptServer::get_global_class_path(selected_addon);
+	Ref<Script> script = ResourceLoader::load(path);
+	if (!script.is_valid()) {
 
-	String res_dir = OS::get_singleton()->get_resource_dir();
-	if ((bool)EditorVCSInterface::get_singleton()->call("initialize", res_dir) == false) {
+		ERR_EXPLAIN("VCS Addon path is invalid");
+	}
+
+	EditorVCSInterface *vcs_interface = memnew(EditorVCSInterface);
+	ScriptInstance *addon_script_instance = script->instance_create(vcs_interface);
+	if (!addon_script_instance) {
+
+		ERR_FAIL_NULL(addon_script_instance);
+		return;
+	}
+
+	// The addon is attached as a script to the VCS interface for a cleaner design
+	vcs_interface->set_script_and_instance(script.get_ref_ptr(), addon_script_instance);
+	EditorVCSInterface::set_singleton(vcs_interface);
+
+	// Send a test signal
+	if ((String)vcs_interface->call("get_vcs_name") == "") {
 
 		ERR_FAIL();
+	}
+
+	// Delete the already in use panel
+	if (!set_up_init_settings) {
+
+		set_up_vbc->remove_child(set_up_init_settings);
+		memdelete(set_up_init_settings);
+	}
+	// Replace it with new one
+	set_up_init_settings = (Control *)EditorVCSInterface::get_singleton()->call("get_initialization_settings_panel_container");
+	set_up_vbc->add_child(set_up_init_settings);
+
+	String res_dir = OS::get_singleton()->get_resource_dir();
+	if (vcs_interface->call("initialize", res_dir)) {
+
+		WARN_PRINT("VCS Initialized");
 	}
 }
 
@@ -108,7 +137,7 @@ EditorVersionControlActions::EditorVersionControlActions() {
 	set_up_choice->connect("item_selected", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
 
-	set_up_init_settings = memnew(PanelContainer);
+	set_up_init_settings = memnew(Control);
 	set_up_init_settings->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
 	set_up_vbc->add_child(set_up_init_settings);
 

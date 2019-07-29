@@ -7,8 +7,6 @@
 
 class EditorVCSInterface : public Object {
 
-	GDCLASS(EditorVCSInterface, Object)
-
 protected:
 	static Object *singleton;
 
@@ -16,8 +14,6 @@ protected:
 
 	friend class VersionControlEditorPlugin;
 
-	EditorVCSInterface();
-	virtual ~EditorVCSInterface();
 
 public:
 	static Object *get_singleton();
@@ -25,11 +21,14 @@ public:
 
 	// Exposing these functions to the editor for use, and for the GDNative addons to implement
 	virtual bool initialize(String p_project_root_path);
-	virtual Control *get_initialization_settings_panel_container();
-	virtual Control *get_commit_dock_panel_container();
+	virtual Variant get_initialization_settings_panel_container();
+	virtual Variant get_commit_dock_panel_container();
 	virtual bool shut_down();
 	virtual String get_project_name();
 	virtual String get_vcs_name();
+
+	EditorVCSInterface();
+	virtual ~EditorVCSInterface();
 };
 
 #endif // !EDITOR_VCS_INTERFACE_H

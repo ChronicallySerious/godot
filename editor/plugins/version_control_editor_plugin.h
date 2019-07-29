@@ -14,7 +14,7 @@ class EditorVersionControlActions : public PopupMenu {
 	HBoxContainer *set_up_hbc;
 	Label *set_up_vcs_label;
 	OptionButton *set_up_choice;
-	PanelContainer *set_up_init_settings;
+	Control *set_up_init_settings;
 	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
