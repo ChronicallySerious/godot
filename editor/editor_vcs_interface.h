@@ -7,6 +7,8 @@
 
 class EditorVCSInterface : public Object {
 
+	GDCLASS(EditorVCSInterface, Object)
+
 protected:
 	static EditorVCSInterface *singleton;
 
