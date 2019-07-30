@@ -93,7 +93,7 @@ void EditorVersionControlActions::_initialize_vcs() {
 		ERR_FAIL();
 	}
 
-	// Delete the already in use panel
+	// Delete the already in use settings panel
 	if (!set_up_init_settings) {
 
 		set_up_vbc->remove_child(set_up_init_settings);
