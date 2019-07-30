@@ -85,28 +85,23 @@ void EditorVersionControlActions::_initialize_vcs() {
 
 	// The addon is attached as a script to the VCS interface for a cleaner design
 	vcs_interface->set_script_and_instance(script.get_ref_ptr(), addon_script_instance);
+
 	EditorVCSInterface::set_singleton(vcs_interface);
-
-	// Send a test signal
-	if ((String)vcs_interface->call("get_vcs_name") == "") {
-
-		ERR_FAIL();
-	}
 
 	// Delete the already in use settings panel
 	if (!set_up_init_settings) {
 
-		set_up_vbc->remove_child(set_up_init_settings);
+		set_up_vbc->get_parent_control()->remove_child(set_up_init_settings);
 		memdelete(set_up_init_settings);
 	}
 	// Replace it with new one
-	set_up_init_settings = (Control *)EditorVCSInterface::get_singleton()->call("get_initialization_settings_panel_container");
+	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
 	set_up_vbc->add_child(set_up_init_settings);
 
 	String res_dir = OS::get_singleton()->get_resource_dir();
-	if (vcs_interface->call("initialize", res_dir)) {
+	if (!vcs_interface->call("initialize", res_dir)) {
 
-		WARN_PRINT("VCS Initialized");
+		ERR_EXPLAIN("VCS was not initialized");
 	}
 }
 

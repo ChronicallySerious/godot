@@ -1,47 +1,77 @@
 #include "editor_vcs_interface.h"
 
-Object *EditorVCSInterface::singleton = NULL;
+EditorVCSInterface *EditorVCSInterface::singleton = NULL;
 
 void EditorVCSInterface::_bind_methods() {
 
-	ClassDB::bind_method(D_METHOD("initialize", "project_root_path"), &EditorVCSInterface::initialize);;
-	ClassDB::bind_method(D_METHOD("get_vcs_name"), &EditorVCSInterface::get_vcs_name);
-	ClassDB::bind_method(D_METHOD("shut_down"), &EditorVCSInterface::shut_down);
-	ClassDB::bind_method(D_METHOD("get_project_name"), &EditorVCSInterface::get_project_name);
+	ClassDB::bind_method(D_METHOD("_initialize", "project_root_path"), &EditorVCSInterface::_initialize);;
+	ClassDB::bind_method(D_METHOD("_get_vcs_name"), &EditorVCSInterface::_get_vcs_name);
+	ClassDB::bind_method(D_METHOD("_shut_down"), &EditorVCSInterface::_shut_down);
+	ClassDB::bind_method(D_METHOD("_get_project_name"), &EditorVCSInterface::_get_project_name);
 
-	ClassDB::bind_method(D_METHOD("get_initialization_settings_panel_container"), &EditorVCSInterface::get_initialization_settings_panel_container);
-	ClassDB::bind_method(D_METHOD("get_commit_dock_panel_container"), &EditorVCSInterface::get_commit_dock_panel_container);
+	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
+	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
 }
 
-bool EditorVCSInterface::initialize(String p_project_root_path) {
+bool EditorVCSInterface::_initialize(String p_project_root_path) {
 
-	WARN_PRINT("No VCS Interface specified. Default Version Control Interface behaviour is active.");
-	return "";
+	WARN_PRINT("Selected VCS addon does not implement an initialization function. This warning will be suppressed.")
+	return true;
 }
 
-Variant EditorVCSInterface::get_initialization_settings_panel_container() {
+Variant EditorVCSInterface::_get_commit_dock_panel_container() {
 
 	return NULL;
 }
 
-Variant EditorVCSInterface::get_commit_dock_panel_container() {
-
-	return NULL;
-}
-
-bool EditorVCSInterface::shut_down() {
+bool EditorVCSInterface::_shut_down() {
 
 	return false;
 }
 
-String EditorVCSInterface::get_project_name() {
+String EditorVCSInterface::_get_project_name() {
 
 	return String();
 }
 
+String EditorVCSInterface::_get_vcs_name() {
+
+	return String();
+}
+
+Variant EditorVCSInterface::_get_initialization_settings_panel_container() {
+
+	return NULL;
+}
+
+bool EditorVCSInterface::initialize(String p_project_root_path) {
+
+	return call("_initialize", p_project_root_path);
+}
+
+PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {
+
+	return (PanelContainer *)(Control *)call("_get_initialization_settings_panel_container");
+}
+
+PanelContainer *EditorVCSInterface::get_commit_dock_panel_container() {
+
+	return (PanelContainer *)(Control *)call("_get_commit_dock_panel_container");
+}
+
+bool EditorVCSInterface::shut_down() {
+
+	return call("_shut_down");
+}
+
+String EditorVCSInterface::get_project_name() {
+
+	return call("_get_project_name");
+}
+
 String EditorVCSInterface::get_vcs_name() {
 
-	return "";
+	return call("_get_vcs_name");
 }
 
 EditorVCSInterface::EditorVCSInterface() {
@@ -50,17 +80,12 @@ EditorVCSInterface::EditorVCSInterface() {
 EditorVCSInterface::~EditorVCSInterface() {
 }
 
-Object *EditorVCSInterface::get_singleton() {
-
-	if (singleton) {
-
-		return singleton;
-	}
+EditorVCSInterface *EditorVCSInterface::get_singleton() {
 
 	return singleton;
 }
 
-void EditorVCSInterface::set_singleton(Object *p_singleton) {
+void EditorVCSInterface::set_singleton(EditorVCSInterface *p_singleton) {
 
 	singleton = p_singleton;
 }
