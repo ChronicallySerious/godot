@@ -7,8 +7,8 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
 void EditorVersionControlActions::_selected_a_vcs(int p_id) {
 
-	List<StringName> &available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
-	const StringName &selected_vcs = set_up_choice->get_item_text(p_id);
+	List<StringName> available_vcs_names = VersionControlEditorPlugin::get_singleton()->get_available_vcs_names();
+	const StringName selected_vcs = set_up_choice->get_item_text(p_id);
 
 	if (available_vcs_names.find(selected_vcs) != NULL) {
 
