@@ -183,7 +183,7 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 	switch (vcs_actions_menu->get_item_id(p_idx)) {
 		case RUN_VCS_SETTINGS: {
 
-			vcs_actions_menu->popup_vcs_set_up_dialog(gui_base);
+			VersionControlEditorPlugin::get_singleton()->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
 }
@@ -5936,7 +5936,7 @@ EditorNode::EditorNode() {
 	plugin_config_dialog->connect("plugin_ready", this, "_on_plugin_ready");
 	gui_base->add_child(plugin_config_dialog);
 
-	vcs_actions_menu = memnew(EditorVersionControlActions);
+	vcs_actions_menu = VersionControlEditorPlugin::get_singleton()->get_version_control_actions_panel();
 	vcs_actions_menu->set_name("Version Control");
 	vcs_actions_menu->connect("index_pressed", this, "_version_control_menu_option");
 	p->add_separator();
@@ -6199,7 +6199,7 @@ EditorNode::EditorNode() {
 	inspector_dock = memnew(InspectorDock(this, editor_data));
 	import_dock = memnew(ImportDock);
 	node_dock = memnew(NodeDock);
-	version_commit_dock = memnew(EditorVersionCommitDock);
+	version_commit_dock = VersionControlEditorPlugin::get_singleton()->get_version_commit_dock();
 
 	filesystem_dock = memnew(FileSystemDock(this));
 	filesystem_dock->connect("inherit", this, "_inherit_request");
@@ -6411,7 +6411,7 @@ EditorNode::EditorNode() {
 	//more visually meaningful to have this later
 	raise_bottom_panel_item(AnimationPlayerEditor::singleton);
 
-	add_editor_plugin(memnew(VersionControlEditorPlugin(this)));
+	add_editor_plugin(VersionControlEditorPlugin::get_singleton());
 	VersionControlEditorPlugin::get_singleton()->register_editor();
 
 	add_editor_plugin(memnew(ShaderEditorPlugin(this)));

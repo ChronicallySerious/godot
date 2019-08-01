@@ -5,10 +5,16 @@
 #include "scene/gui/container.h"
 #include "scene/gui/text_edit.h"
 
-class EditorVersionControlActions : public PopupMenu {
+class VersionControlEditorPlugin : public EditorPlugin {
 
-	GDCLASS(EditorVersionControlActions, PopupMenu)
+	GDCLASS(VersionControlEditorPlugin, EditorPlugin)
 
+	static VersionControlEditorPlugin *singleton;
+
+	List<StringName> available_vcs_names;
+	String vcs_name;
+
+	PopupMenu *version_control_actions;
 	AcceptDialog *set_up_dialog;
 	VBoxContainer *set_up_vbc;
 	HBoxContainer *set_up_hbc;
@@ -22,71 +28,31 @@ class EditorVersionControlActions : public PopupMenu {
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
 
-	friend class VersionControlEditorPlugin;
-
-protected:
-	static void _bind_methods();
-
-public:
-	void popup_vcs_set_up_dialog(const Control *p_gui_base);
-
-	EditorVersionControlActions();
-	~EditorVersionControlActions();
-};
-
-class EditorVersionCommitDock : public VBoxContainer {
-
-	GDCLASS(EditorVersionCommitDock, VBoxContainer)
-
+	VBoxContainer *version_commit_dock;
 	Button *stage;
 	VBoxContainer *commit_box;
 	HBoxContainer *commit_top_hbc;
 	TextEdit *commit_message;
 	Button *commit;
 
-public:
-	EditorVersionCommitDock();
-	~EditorVersionCommitDock();
-};
-
-class EditorVersionControlDock : public PanelContainer {
-
-	GDCLASS(EditorVersionControlDock, PanelContainer)
-
-protected:
+	PanelContainer *version_control_dock;
 	ToolButton *tool_button;
-
-	static void _bind_methods();
-
-public:
-	void set_tool_button(ToolButton *p_button) { tool_button = p_button; }
-
-	EditorVersionControlDock();
-	~EditorVersionControlDock();
-};
-
-class VersionControlEditorPlugin : public EditorPlugin {
-
-	GDCLASS(VersionControlEditorPlugin, EditorPlugin)
-
-	static VersionControlEditorPlugin *singleton;
-
-	List<StringName> available_vcs_names;
-	String vcs_name;
-
-	EditorVersionControlActions *version_control_actions;
-	EditorVersionControlDock *version_control_dock;
-	EditorVersionCommitDock *version_commit_dock;
-
-	EditorNode *editor_node;
-
-	static void _bind_methods();
 
 	friend class EditorVCSInterface;
 	friend class EditorVersionControlActions;
 
+protected:
+	static void _bind_methods();
+
 public:
-	static VersionControlEditorPlugin *get_singleton() { return singleton; }
+	static VersionControlEditorPlugin *get_singleton();
+
+	void popup_vcs_set_up_dialog(const Control *p_gui_base);
+	void set_tool_button(ToolButton *p_button) { tool_button = p_button; }
+
+	PopupMenu *get_version_control_actions_panel() const { return version_control_actions; }
+	VBoxContainer *get_version_commit_dock() const { return version_commit_dock; }
+	PanelContainer *get_version_control_dock() const { return version_control_dock; }
 
 	void register_editor();
 	void fetch_available_vcs_addon_names();
@@ -95,13 +61,9 @@ public:
 	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }
 	const String get_vcs_name() const { return vcs_name; }
 
-	EditorVersionControlActions *get_version_control_actions_panel() const { return version_control_actions; }
-	EditorVersionControlDock *get_version_control_dock() const { return version_control_dock; }
-	EditorVersionCommitDock *get_version_commit_dock() const { return version_commit_dock; }
-
 	void set_version_control_name(String p_vcs_name) { vcs_name = p_vcs_name; }
 
-	VersionControlEditorPlugin(EditorNode *p_node);
+	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();
 };
 
