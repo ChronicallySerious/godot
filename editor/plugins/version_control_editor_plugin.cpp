@@ -99,7 +99,7 @@ void EditorVersionControlActions::_initialize_vcs() {
 	set_up_vbc->add_child(set_up_init_settings);
 
 	String res_dir = OS::get_singleton()->get_resource_dir();
-	if (!vcs_interface->call("initialize", res_dir)) {
+	if (!vcs_interface->initialize(res_dir)) {
 
 		ERR_EXPLAIN("VCS was not initialized");
 	}
