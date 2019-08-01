@@ -89,7 +89,7 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 	if (set_up_init_settings) {
 
 		set_up_vbc->get_parent_control()->remove_child(set_up_init_settings);
-		memdelete(set_up_init_settings);
+		set_up_init_settings->queue_delete();
 	}
 	// Replace it with new one
 	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
