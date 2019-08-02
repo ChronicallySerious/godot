@@ -1,16 +1,15 @@
 #include "version_control_editor_plugin.h"
 #include "core/script_language.h"
 #include "editor/editor_node.h"
-#include "editor_vcs_interface.h"
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
 
 void VersionControlEditorPlugin::_selected_a_vcs(int p_id) {
 
-	List<StringName> available_vcs_names = get_available_vcs_names();
+	List<StringName> available_addons = get_available_vcs_names();
 	const StringName selected_vcs = set_up_choice->get_item_text(p_id);
 
-	if (available_vcs_names.find(selected_vcs) != NULL) {
+	if (available_addons.find(selected_vcs) != NULL) {
 
 		set_up_init_button->set_disabled(false);
 	} else {
@@ -28,10 +27,10 @@ void VersionControlEditorPlugin::_populate_available_vcs_names() {
 		set_up_choice->add_item("Select an available VCS");
 
 		VersionControlEditorPlugin::get_singleton()->fetch_available_vcs_addon_names();
-		List<StringName> available_vcs_names = get_available_vcs_names();
-		for (int i = 0; i < available_vcs_names.size(); i++) {
+		List<StringName> available_addons = get_available_vcs_names();
+		for (int i = 0; i < available_addons.size(); i++) {
 
-			set_up_choice->add_item(available_vcs_names[i]);
+			set_up_choice->add_item(available_addons[i]);
 		}
 
 		called = true;
@@ -72,7 +71,10 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 		ERR_EXPLAIN("VCS Addon path is invalid");
 	}
 
-	EditorVCSInterface *vcs_interface = memnew(EditorVCSInterface);
+	if (!vcs_interface) {
+
+		vcs_interface = memnew(EditorVCSInterface);
+	}
 	ScriptInstance *addon_script_instance = script->instance_create(vcs_interface);
 	if (!addon_script_instance) {
 
@@ -80,26 +82,25 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 		return;
 	}
 
-	// The addon is attached as a script to the VCS interface for a cleaner design
+	// The addon is attached as a script to the VCS interface for a proxy architecture
 	vcs_interface->set_script_and_instance(script.get_ref_ptr(), addon_script_instance);
 
 	EditorVCSInterface::set_singleton(vcs_interface);
 
+	String res_dir = OS::get_singleton()->get_resource_dir();
+	if (!EditorVCSInterface::get_singleton()->initialize(res_dir)) {
+
+		ERR_EXPLAIN("VCS was not initialized");
+	}
+
 	// Delete the already in use settings panel
 	if (set_up_init_settings) {
 
-		set_up_vbc->get_parent_control()->remove_child(set_up_init_settings);
 		set_up_init_settings->queue_delete();
 	}
 	// Replace it with new one
 	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
 	set_up_vbc->add_child(set_up_init_settings);
-
-	String res_dir = OS::get_singleton()->get_resource_dir();
-	if (!vcs_interface->initialize(res_dir)) {
-
-		ERR_EXPLAIN("VCS was not initialized");
-	}
 }
 	
 void VersionControlEditorPlugin::_bind_methods() {
@@ -118,12 +119,23 @@ void VersionControlEditorPlugin::register_editor() {
 
 void VersionControlEditorPlugin::fetch_available_vcs_addon_names() {
 
-	ScriptServer::get_global_class_list(&available_vcs_names);
+	ScriptServer::get_global_class_list(&available_addons);
+}
+
+const bool VersionControlEditorPlugin::get_is_vcs_intialized() const {
+
+	return vcs_interface ? vcs_interface->get_is_vcs_intialized() : false;
+}
+
+const String VersionControlEditorPlugin::get_vcs_name() const {
+
+	return vcs_interface ? vcs_interface->get_vcs_name() : "";
 }
 
 VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	singleton = this;
+	vcs_interface = NULL;
 
 	version_control_actions = memnew(PopupMenu);
 	version_control_actions->set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
@@ -152,7 +164,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	set_up_choice->connect("item_selected", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
 
-	set_up_init_settings = memnew(Control);
+	set_up_init_settings = memnew(PanelContainer);
 	set_up_init_settings->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
 	set_up_vbc->add_child(set_up_init_settings);
 
@@ -167,26 +179,26 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	version_commit_dock = memnew(VBoxContainer);
 
-	commit_box = memnew(VBoxContainer);
-	version_commit_dock->add_child(commit_box);
+	commit_box_vbc = memnew(VBoxContainer);
+	version_commit_dock->add_child(commit_box_vbc);
 
-	stage = memnew(Button);
-	stage->set_text(TTR("Stage files"));
-	version_commit_dock->add_child(stage);
+	stage_button = memnew(Button);
+	stage_button->set_text(TTR("Stage all"));
+	version_commit_dock->add_child(stage_button);
 
-	commit_top_hbc = memnew(HBoxContainer);
-	commit_top_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	version_commit_dock->add_child(commit_top_hbc);
+	HSeparator *separator = memnew(HSeparator);
+	version_commit_dock->add_child(separator);
 
 	commit_message = memnew(TextEdit);
 	commit_message->set_text(TTR("Commit messages can have multiple lines"));
 	commit_message->set_custom_minimum_size(Size2(100, 70));
 	commit_message->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	commit_box->add_child(commit_message);
+	commit_box_vbc->add_child(commit_message);
 
-	commit = memnew(Button);
-	commit->set_text(TTR("Commit"));
-	commit_box->add_child(commit);
+	commit_button = memnew(Button);
+	commit_button->set_text(TTR("Commit"));
+	commit_box_vbc->add_child(commit_button);
+	commit_box_vbc->add_spacer();
 
 	version_control_dock = memnew(PanelContainer);
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -196,5 +208,6 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
 	memdelete(version_control_actions);
+	memdelete(version_commit_dock);
 	memdelete(version_control_dock);
 }

@@ -4,7 +4,8 @@ EditorVCSInterface *EditorVCSInterface::singleton = NULL;
 
 void EditorVCSInterface::_bind_methods() {
 
-	ClassDB::bind_method(D_METHOD("_initialize", "project_root_path"), &EditorVCSInterface::_initialize);;
+	ClassDB::bind_method(D_METHOD("_initialize", "project_root_path"), &EditorVCSInterface::_initialize);
+	ClassDB::bind_method(D_METHOD("_get_is_vcs_intialized"), &EditorVCSInterface::_get_is_vcs_intialized);
 	ClassDB::bind_method(D_METHOD("_get_vcs_name"), &EditorVCSInterface::_get_vcs_name);
 	ClassDB::bind_method(D_METHOD("_shut_down"), &EditorVCSInterface::_shut_down);
 	ClassDB::bind_method(D_METHOD("_get_project_name"), &EditorVCSInterface::_get_project_name);
@@ -17,6 +18,11 @@ bool EditorVCSInterface::_initialize(String p_project_root_path) {
 
 	WARN_PRINT("Selected VCS addon does not implement an initialization function. This warning will be suppressed.")
 	return true;
+}
+
+bool EditorVCSInterface::_get_is_vcs_intialized() {
+
+	return false;
 }
 
 Variant EditorVCSInterface::_get_commit_dock_panel_container() {
@@ -49,14 +55,19 @@ bool EditorVCSInterface::initialize(String p_project_root_path) {
 	return call("_initialize", p_project_root_path);
 }
 
+bool EditorVCSInterface::get_is_vcs_intialized() {
+
+	return call("_get_is_vcs_intialized");
+}
+
 PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {
 
-	return (PanelContainer *)(Control *)call("_get_initialization_settings_panel_container");
+	return Object::cast_to<PanelContainer>(call("_get_initialization_settings_panel_container"));
 }
 
 PanelContainer *EditorVCSInterface::get_commit_dock_panel_container() {
 
-	return (PanelContainer *)(Control *)call("_get_commit_dock_panel_container");
+	return Object::cast_to<PanelContainer>(call("_get_commit_dock_panel_container"));
 }
 
 bool EditorVCSInterface::shut_down() {

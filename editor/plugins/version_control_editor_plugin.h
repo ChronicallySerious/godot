@@ -2,6 +2,7 @@
 #define VERSION_CONTROL_EDITOR_PLUGIN_H
 
 #include "editor/editor_plugin.h"
+#include "editor/editor_vcs_interface.h"
 #include "scene/gui/container.h"
 #include "scene/gui/text_edit.h"
 
@@ -10,9 +11,9 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	GDCLASS(VersionControlEditorPlugin, EditorPlugin)
 
 	static VersionControlEditorPlugin *singleton;
+	EditorVCSInterface *vcs_interface;
 
-	List<StringName> available_vcs_names;
-	String vcs_name;
+	List<StringName> available_addons;
 
 	PopupMenu *version_control_actions;
 	AcceptDialog *set_up_dialog;
@@ -20,7 +21,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	HBoxContainer *set_up_hbc;
 	Label *set_up_vcs_label;
 	OptionButton *set_up_choice;
-	Control *set_up_init_settings;
+	PanelContainer *set_up_init_settings;
 	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
@@ -29,11 +30,10 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	void _initialize_vcs();
 
 	VBoxContainer *version_commit_dock;
-	Button *stage;
-	VBoxContainer *commit_box;
-	HBoxContainer *commit_top_hbc;
+	Button *stage_button;
+	VBoxContainer *commit_box_vbc;
 	TextEdit *commit_message;
-	Button *commit;
+	Button *commit_button;
 
 	PanelContainer *version_control_dock;
 	ToolButton *tool_button;
@@ -57,11 +57,9 @@ public:
 	void register_editor();
 	void fetch_available_vcs_addon_names();
 
-	List<StringName> get_available_vcs_names() const { return available_vcs_names; }
-	const bool get_is_vcs_intialized() const { return vcs_name == "" ? false : true; }
-	const String get_vcs_name() const { return vcs_name; }
-
-	void set_version_control_name(String p_vcs_name) { vcs_name = p_vcs_name; }
+	List<StringName> get_available_vcs_names() const { return available_addons; }
+	const bool get_is_vcs_intialized() const;
+	const String get_vcs_name() const;
 
 	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();

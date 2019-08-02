@@ -18,6 +18,7 @@ protected:
 
 	// Implemented by addons as end points for the proxy functions
 	bool _initialize(String p_project_root_path);
+	bool _get_is_vcs_intialized();
 	Variant _get_initialization_settings_panel_container();
 	Variant _get_commit_dock_panel_container();
 	bool _shut_down();
@@ -30,6 +31,7 @@ public:
 
 	// Proxy functions to the editor for use
 	virtual bool initialize(String p_project_root_path);
+	virtual bool get_is_vcs_intialized();
 	virtual PanelContainer *get_initialization_settings_panel_container();
 	virtual PanelContainer *get_commit_dock_panel_container();
 	virtual bool shut_down();
