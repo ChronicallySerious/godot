@@ -222,7 +222,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	left_pane_heading->set_text("Last version");
 	left_pane->add_child(left_pane_heading);
 
-	left_diff = memnew(TextEdit);
+	left_diff = memnew(RichTextLabel);
 	left_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
 	left_pane->add_child(left_diff);
 
@@ -235,7 +235,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	right_pane_heading->set_text("Modifications");
 	right_pane->add_child(right_pane_heading);
 
-	right_diff = memnew(TextEdit);
+	right_diff = memnew(RichTextLabel);
 	right_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
 	right_pane->add_child(right_diff);
 }

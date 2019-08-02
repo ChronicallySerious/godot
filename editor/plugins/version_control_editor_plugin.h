@@ -4,6 +4,7 @@
 #include "editor/editor_plugin.h"
 #include "editor/editor_vcs_interface.h"
 #include "scene/gui/container.h"
+#include "scene/gui/rich_text_label.h"
 #include "scene/gui/text_edit.h"
 
 class VersionControlEditorPlugin : public EditorPlugin {
@@ -25,10 +26,6 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	Button *set_up_init_button;
 	Button *set_up_ok_button;
 
-	void _populate_available_vcs_names();
-	void _selected_a_vcs(int p_id);
-	void _initialize_vcs();
-
 	VBoxContainer *version_commit_dock;
 	Button *stage_button;
 	VBoxContainer *commit_box_vbc;
@@ -41,10 +38,14 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	HSplitContainer *diff_viewer;
 	VBoxContainer *left_pane;
 	Label *left_pane_heading;
-	TextEdit *left_diff;
+	RichTextLabel *left_diff;
 	VBoxContainer *right_pane;
 	Label *right_pane_heading;
-	TextEdit *right_diff;
+	RichTextLabel *right_diff;
+
+	void _populate_available_vcs_names();
+	void _selected_a_vcs(int p_id);
+	void _initialize_vcs();
 
 	friend class EditorVCSInterface;
 	friend class EditorVersionControlActions;
