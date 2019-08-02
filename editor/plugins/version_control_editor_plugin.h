@@ -32,11 +32,19 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	VBoxContainer *version_commit_dock;
 	Button *stage_button;
 	VBoxContainer *commit_box_vbc;
+	ItemList *staging_area;
 	TextEdit *commit_message;
 	Button *commit_button;
 
 	PanelContainer *version_control_dock;
 	ToolButton *tool_button;
+	HSplitContainer *diff_viewer;
+	VBoxContainer *left_pane;
+	Label *left_pane_heading;
+	TextEdit *left_diff;
+	VBoxContainer *right_pane;
+	Label *right_pane_heading;
+	TextEdit *right_diff;
 
 	friend class EditorVCSInterface;
 	friend class EditorVersionControlActions;

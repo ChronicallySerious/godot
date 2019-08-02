@@ -179,9 +179,6 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	version_commit_dock = memnew(VBoxContainer);
 
-	commit_box_vbc = memnew(VBoxContainer);
-	version_commit_dock->add_child(commit_box_vbc);
-
 	stage_button = memnew(Button);
 	stage_button->set_text(TTR("Stage all"));
 	version_commit_dock->add_child(stage_button);
@@ -189,8 +186,19 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	HSeparator *separator = memnew(HSeparator);
 	version_commit_dock->add_child(separator);
 
+	commit_box_vbc = memnew(VBoxContainer);
+	version_commit_dock->add_child(commit_box_vbc);
+
+	staging_area = memnew(ItemList);
+	staging_area->set_allow_reselect(true);
+	staging_area->set_same_column_width(true);
+	staging_area->set_auto_height(true);
+	commit_box_vbc->add_child(staging_area);
+
 	commit_message = memnew(TextEdit);
-	commit_message->set_text(TTR("Commit messages can have multiple lines"));
+	commit_message->set_h_grow_direction(Control::GrowDirection::GROW_DIRECTION_BEGIN);
+	commit_message->set_v_grow_direction(Control::GrowDirection::GROW_DIRECTION_END);
+	commit_message->set_text(TTR("Add a commit message"));
 	commit_message->set_custom_minimum_size(Size2(100, 70));
 	commit_message->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	commit_box_vbc->add_child(commit_message);
@@ -198,16 +206,43 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	commit_button = memnew(Button);
 	commit_button->set_text(TTR("Commit"));
 	commit_box_vbc->add_child(commit_button);
-	commit_box_vbc->add_spacer();
 
 	version_control_dock = memnew(PanelContainer);
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	version_control_dock->hide();
+
+	diff_viewer = memnew(HSplitContainer);
+	version_control_dock->add_child(diff_viewer);
+
+	left_pane = memnew(VBoxContainer);
+	left_pane->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	diff_viewer->add_child(left_pane);
+
+	left_pane_heading = memnew(Label);
+	left_pane_heading->set_text("Last version");
+	left_pane->add_child(left_pane_heading);
+
+	left_diff = memnew(TextEdit);
+	left_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
+	left_pane->add_child(left_diff);
+
+	right_pane = memnew(VBoxContainer);
+	right_pane->set_alignment(BoxContainer::AlignMode::ALIGN_BEGIN);
+	right_pane->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	diff_viewer->add_child(right_pane);
+
+	right_pane_heading = memnew(Label);
+	right_pane_heading->set_text("Modifications");
+	right_pane->add_child(right_pane_heading);
+
+	right_diff = memnew(TextEdit);
+	right_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
+	right_pane->add_child(right_diff);
 }
 
 VersionControlEditorPlugin::~VersionControlEditorPlugin() {
 
-	memdelete(version_control_actions);
-	memdelete(version_commit_dock);
 	memdelete(version_control_dock);
+	memdelete(version_commit_dock);
+	memdelete(version_control_actions);
 }
