@@ -13,6 +13,11 @@ void EditorVCSInterface::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
 	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
+
+	ClassDB::bind_method(D_METHOD("commit"), &EditorVCSInterface::commit);
+	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
+	ClassDB::bind_method(D_METHOD("stage_all"), &EditorVCSInterface::stage_all);
+	ClassDB::bind_method(D_METHOD("_stage_all"), &EditorVCSInterface::_stage_all);
 }
 
 bool EditorVCSInterface::_initialize(String p_project_root_path) {
@@ -32,6 +37,16 @@ Dictionary EditorVCSInterface::_get_untracked_files_data() {
 	res["left"] = "right";
 
 	return res;
+}
+
+void EditorVCSInterface::_stage_all() {
+
+	return;
+}
+
+void EditorVCSInterface::_commit(String p_msg) {
+
+	return;
 }
 
 Variant EditorVCSInterface::_get_commit_dock_panel_container() {
@@ -71,7 +86,19 @@ bool EditorVCSInterface::get_is_vcs_intialized() {
 
 Dictionary EditorVCSInterface::get_untracked_files_data() {
 
-	return call("get_untracked_files_data");
+	return call("_get_untracked_files_data");
+}
+
+void EditorVCSInterface::stage_all() {
+
+	call("_stage_all");
+	return;
+}
+
+void EditorVCSInterface::commit(String p_msg) {
+
+	call("_commit");
+	return;
 }
 
 PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {

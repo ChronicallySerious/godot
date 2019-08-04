@@ -27,9 +27,14 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	Button *set_up_ok_button;
 
 	VBoxContainer *version_commit_dock;
-	Button *stage_button;
 	VBoxContainer *commit_box_vbc;
+	HSplitContainer *stage_tools;
 	ItemList *staging_area;
+	Label *staging_area_label;
+	HSplitContainer *stage_buttons;
+	Button *stage_all_button;
+	Button *stage_selected_button;
+	Button *refresh_button;
 	TextEdit *commit_message;
 	Button *commit_button;
 

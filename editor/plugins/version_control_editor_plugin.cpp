@@ -1,5 +1,6 @@
 #include "version_control_editor_plugin.h"
 #include "core/script_language.h"
+#include "editor/editor_fonts.h"
 #include "editor/editor_node.h"
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
@@ -179,32 +180,63 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	version_commit_dock = memnew(VBoxContainer);
 
-	stage_button = memnew(Button);
-	stage_button->set_text(TTR("Stage all"));
-	version_commit_dock->add_child(stage_button);
-
 	HSeparator *separator = memnew(HSeparator);
 	version_commit_dock->add_child(separator);
 
 	commit_box_vbc = memnew(VBoxContainer);
 	version_commit_dock->add_child(commit_box_vbc);
 
+	stage_tools = memnew(HSplitContainer);
+	commit_box_vbc->add_child(stage_tools);
+
+	staging_area_label = memnew(Label);
+	staging_area_label->set_h_size_flags(Label::SIZE_EXPAND_FILL);
+	staging_area_label->set_text(TTR("Staging area"));
+	stage_tools->add_child(staging_area_label);
+
+	refresh_button = memnew(Button);
+	refresh_button->set_tooltip(TTR("Detect new changes"));
+	refresh_button->set_text(TTR("Refresh"));
+	refresh_button->set_icon(EditorNode::get_singleton()->get_gui_base()->get_icon("Reload", "EditorIcons"));
+	stage_tools->add_child(refresh_button);
+
 	staging_area = memnew(ItemList);
+	staging_area->set_tooltip(TTR("Staged files"));
 	staging_area->set_allow_reselect(true);
 	staging_area->set_same_column_width(true);
+	staging_area->add_item(TTR("No files available to stage"));
 	staging_area->set_auto_height(true);
 	commit_box_vbc->add_child(staging_area);
+
+	stage_buttons = memnew(HSplitContainer);
+	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
+	commit_box_vbc->add_child(stage_buttons);
+
+	stage_selected_button = memnew(Button);
+	stage_selected_button->set_h_size_flags(Button::SIZE_EXPAND_FILL);
+	stage_selected_button->set_text(TTR("Stage Selected"));
+	stage_selected_button->connect("pressed", vcs_interface, "stage_selected");
+	stage_buttons->add_child(stage_selected_button);
+
+	stage_all_button = memnew(Button);
+	stage_all_button->set_text(TTR("Stage All"));
+	stage_all_button->connect("pressed", vcs_interface, "stage_all");
+	stage_buttons->add_child(stage_all_button);
+
+	commit_box_vbc->add_child(memnew(HSeparator));
 
 	commit_message = memnew(TextEdit);
 	commit_message->set_h_grow_direction(Control::GrowDirection::GROW_DIRECTION_BEGIN);
 	commit_message->set_v_grow_direction(Control::GrowDirection::GROW_DIRECTION_END);
+	commit_message->add_color_override(TTR("Add a commit message"), Color(1.0f, 1.0f, 1.0f, 0.75f));
 	commit_message->set_text(TTR("Add a commit message"));
 	commit_message->set_custom_minimum_size(Size2(100, 70));
 	commit_message->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	commit_box_vbc->add_child(commit_message);
 
 	commit_button = memnew(Button);
-	commit_button->set_text(TTR("Commit"));
+	commit_button->set_text(TTR("Commit Changes"));
+	commit_button->connect("pressed", vcs_interface, "commit");
 	commit_box_vbc->add_child(commit_button);
 
 	version_control_dock = memnew(PanelContainer);
@@ -219,7 +251,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	diff_viewer->add_child(left_pane);
 
 	left_pane_heading = memnew(Label);
-	left_pane_heading->set_text("Last version");
+	left_pane_heading->set_text(TTR("Last Commit"));
 	left_pane->add_child(left_pane_heading);
 
 	left_diff = memnew(RichTextLabel);
@@ -232,7 +264,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	diff_viewer->add_child(right_pane);
 
 	right_pane_heading = memnew(Label);
-	right_pane_heading->set_text("Modifications");
+	right_pane_heading->set_text(TTR("Changes"));
 	right_pane->add_child(right_pane_heading);
 
 	right_diff = memnew(RichTextLabel);
