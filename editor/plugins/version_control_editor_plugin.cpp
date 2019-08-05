@@ -1,9 +1,16 @@
 #include "version_control_editor_plugin.h"
 #include "core/script_language.h"
-#include "editor/editor_fonts.h"
 #include "editor/editor_node.h"
 
 VersionControlEditorPlugin *VersionControlEditorPlugin::singleton = NULL;
+	
+void VersionControlEditorPlugin::_bind_methods() {
+
+	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &VersionControlEditorPlugin::_selected_a_vcs);
+	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
+	ClassDB::bind_method(D_METHOD("_send_commit_msg"), &VersionControlEditorPlugin::_send_commit_msg);
+	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
+}
 
 void VersionControlEditorPlugin::_selected_a_vcs(int p_id) {
 
@@ -88,28 +95,35 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 
 	EditorVCSInterface::set_singleton(vcs_interface);
 
+	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
+	ERR_FAIL_NULL(set_up_init_settings);
+
 	String res_dir = OS::get_singleton()->get_resource_dir();
 	if (!EditorVCSInterface::get_singleton()->initialize(res_dir)) {
 
 		ERR_EXPLAIN("VCS was not initialized");
 	}
 
-	// Delete the already in use settings panel
-	if (set_up_init_settings) {
-
-		set_up_init_settings->queue_delete();
-	}
-	// Replace it with new one
-	set_up_init_settings = EditorVCSInterface::get_singleton()->get_initialization_settings_panel_container();
-	set_up_vbc->add_child(set_up_init_settings);
+	stage_selected_button->connect("pressed", vcs_interface, "stage_selected");
+	stage_all_button->connect("pressed", vcs_interface, "stage_all");
 }
-	
-void VersionControlEditorPlugin::_bind_methods() {
 
-	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &VersionControlEditorPlugin::_selected_a_vcs);
-	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
+void VersionControlEditorPlugin::_send_commit_msg() {
 
-	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
+	if (!vcs_interface) {
+
+		ERR_EXPLAIN("No VCS addon found. Set up a VCS addon from Project menu");
+		ERR_FAIL();
+	}
+
+	String msg = commit_message->get_text();
+	if (msg == "") {
+
+		ERR_EXPLAIN("No commit message provided");
+		ERR_FAIL();
+	}
+
+	vcs_interface->commit(msg);
 }
 
 void VersionControlEditorPlugin::register_editor() {
@@ -165,10 +179,8 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	set_up_choice->connect("item_selected", this, "_selected_a_vcs");
 	set_up_hbc->add_child(set_up_choice);
 
-	set_up_init_settings = memnew(PanelContainer);
-	set_up_init_settings->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	set_up_vbc->add_child(set_up_init_settings);
-
+	set_up_init_settings = NULL;
+	
 	set_up_init_button = memnew(Button);
 	set_up_init_button->set_disabled(true);
 	set_up_init_button->set_text(TTR("Initialize"));
@@ -179,14 +191,13 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	version_control_actions->set_h_size_flags(PopupMenu::SIZE_EXPAND_FILL);
 
 	version_commit_dock = memnew(VBoxContainer);
-
-	HSeparator *separator = memnew(HSeparator);
-	version_commit_dock->add_child(separator);
+	version_commit_dock->set_visible(false);
 
 	commit_box_vbc = memnew(VBoxContainer);
 	version_commit_dock->add_child(commit_box_vbc);
 
 	stage_tools = memnew(HSplitContainer);
+	stage_tools->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
 	commit_box_vbc->add_child(stage_tools);
 
 	staging_area_label = memnew(Label);
@@ -200,13 +211,8 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	refresh_button->set_icon(EditorNode::get_singleton()->get_gui_base()->get_icon("Reload", "EditorIcons"));
 	stage_tools->add_child(refresh_button);
 
-	staging_area = memnew(ItemList);
-	staging_area->set_tooltip(TTR("Staged files"));
-	staging_area->set_allow_reselect(true);
-	staging_area->set_same_column_width(true);
-	staging_area->add_item(TTR("No files available to stage"));
-	staging_area->set_auto_height(true);
-	commit_box_vbc->add_child(staging_area);
+	staging_area = memnew(VBoxContainer);
+	version_commit_dock->add_child(staging_area, true);
 
 	stage_buttons = memnew(HSplitContainer);
 	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
@@ -215,12 +221,10 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_selected_button = memnew(Button);
 	stage_selected_button->set_h_size_flags(Button::SIZE_EXPAND_FILL);
 	stage_selected_button->set_text(TTR("Stage Selected"));
-	stage_selected_button->connect("pressed", vcs_interface, "stage_selected");
 	stage_buttons->add_child(stage_selected_button);
 
 	stage_all_button = memnew(Button);
 	stage_all_button->set_text(TTR("Stage All"));
-	stage_all_button->connect("pressed", vcs_interface, "stage_all");
 	stage_buttons->add_child(stage_all_button);
 
 	commit_box_vbc->add_child(memnew(HSeparator));
@@ -228,7 +232,6 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	commit_message = memnew(TextEdit);
 	commit_message->set_h_grow_direction(Control::GrowDirection::GROW_DIRECTION_BEGIN);
 	commit_message->set_v_grow_direction(Control::GrowDirection::GROW_DIRECTION_END);
-	commit_message->add_color_override(TTR("Add a commit message"), Color(1.0f, 1.0f, 1.0f, 0.75f));
 	commit_message->set_text(TTR("Add a commit message"));
 	commit_message->set_custom_minimum_size(Size2(100, 70));
 	commit_message->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -236,9 +239,9 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	commit_button = memnew(Button);
 	commit_button->set_text(TTR("Commit Changes"));
-	commit_button->connect("pressed", vcs_interface, "commit");
+	commit_button->connect("pressed", this, "_send_commit_msg");
 	commit_box_vbc->add_child(commit_button);
-
+	
 	version_control_dock = memnew(PanelContainer);
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	version_control_dock->hide();

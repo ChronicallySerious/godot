@@ -29,7 +29,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	VBoxContainer *version_commit_dock;
 	VBoxContainer *commit_box_vbc;
 	HSplitContainer *stage_tools;
-	ItemList *staging_area;
+	VBoxContainer *staging_area;
 	Label *staging_area_label;
 	HSplitContainer *stage_buttons;
 	Button *stage_all_button;
@@ -51,9 +51,9 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	void _populate_available_vcs_names();
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
+	void _send_commit_msg();
 
 	friend class EditorVCSInterface;
-	friend class EditorVersionControlActions;
 
 protected:
 	static void _bind_methods();

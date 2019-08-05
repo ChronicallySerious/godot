@@ -10,11 +10,9 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_get_untracked_files_data"), &EditorVCSInterface::_get_untracked_files_data);
 	ClassDB::bind_method(D_METHOD("_shut_down"), &EditorVCSInterface::_shut_down);
 	ClassDB::bind_method(D_METHOD("_get_project_name"), &EditorVCSInterface::_get_project_name);
-
 	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
 	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
-
-	ClassDB::bind_method(D_METHOD("commit"), &EditorVCSInterface::commit);
+	ClassDB::bind_method(D_METHOD("commit", "msg"), &EditorVCSInterface::commit);
 	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
 	ClassDB::bind_method(D_METHOD("stage_all"), &EditorVCSInterface::stage_all);
 	ClassDB::bind_method(D_METHOD("_stage_all"), &EditorVCSInterface::_stage_all);
@@ -33,10 +31,7 @@ bool EditorVCSInterface::_get_is_vcs_intialized() {
 
 Dictionary EditorVCSInterface::_get_untracked_files_data() {
 
-	Dictionary res;
-	res["left"] = "right";
-
-	return res;
+	return Dictionary();
 }
 
 void EditorVCSInterface::_stage_all() {
@@ -49,7 +44,7 @@ void EditorVCSInterface::_commit(String p_msg) {
 	return;
 }
 
-Variant EditorVCSInterface::_get_commit_dock_panel_container() {
+Control *EditorVCSInterface::_get_commit_dock_panel_container() {
 
 	return NULL;
 }
@@ -66,10 +61,10 @@ String EditorVCSInterface::_get_project_name() {
 
 String EditorVCSInterface::_get_vcs_name() {
 
-	return String();
+	return "";
 }
 
-Variant EditorVCSInterface::_get_initialization_settings_panel_container() {
+Control *EditorVCSInterface::_get_initialization_settings_panel_container() {
 
 	return NULL;
 }
@@ -97,18 +92,20 @@ void EditorVCSInterface::stage_all() {
 
 void EditorVCSInterface::commit(String p_msg) {
 
-	call("_commit");
+	call("_commit", p_msg);
 	return;
 }
 
 PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {
 
-	return Object::cast_to<PanelContainer>(call("_get_initialization_settings_panel_container"));
+	PanelContainer *c = reinterpret_cast<PanelContainer *>(&call("_get_initialization_settings_panel_container"));
+	return Object::cast_to<PanelContainer>(c);
 }
 
 PanelContainer *EditorVCSInterface::get_commit_dock_panel_container() {
 
-	return Object::cast_to<PanelContainer>(call("_get_commit_dock_panel_container"));
+	Control *c = Object::cast_to<Control>(call("_get_commit_dock_panel_container").operator Node *());
+	return Object::cast_to<PanelContainer>(c);
 }
 
 bool EditorVCSInterface::shut_down() {

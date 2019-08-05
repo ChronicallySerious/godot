@@ -6034,7 +6034,7 @@ EditorNode::EditorNode() {
 	vcs_actions_menu->connect("index_pressed", this, "_version_control_menu_option");
 	p->add_separator();
 	p->add_child(vcs_actions_menu);
-	p->add_submenu_item(TTR("Version Control Actions"), "Version Control");
+	p->add_submenu_item(TTR("Version Control"), "Version Control");
 	vcs_actions_menu->add_item(TTR("Set Up Version Control"), RUN_VCS_SETTINGS);
 
 	tool_menu = memnew(PopupMenu);
@@ -6300,10 +6300,6 @@ EditorNode::EditorNode() {
 	dock_slot[DOCK_SLOT_LEFT_UR]->add_child(import_dock);
 	dock_slot[DOCK_SLOT_LEFT_UR]->set_tab_title(import_dock->get_index(), TTR("Import"));
 
-	// Commit: Full height right, behind Node
-	dock_slot[DOCK_SLOT_RIGHT_BL]->add_child(version_commit_dock);
-	dock_slot[DOCK_SLOT_RIGHT_BL]->set_tab_title(version_commit_dock->get_index(), TTR("Commit"));
-
 	// FileSystem: Bottom left
 	dock_slot[DOCK_SLOT_LEFT_BR]->add_child(filesystem_dock);
 	dock_slot[DOCK_SLOT_LEFT_BR]->set_tab_title(filesystem_dock->get_index(), TTR("FileSystem"));
@@ -6315,6 +6311,10 @@ EditorNode::EditorNode() {
 	// Node: Full height right, behind Inspector
 	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(node_dock);
 	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(node_dock->get_index(), TTR("Node"));
+
+	// Commit: Full height right, behind Node
+	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(version_commit_dock);
+	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(version_commit_dock->get_index(), TTR("Commit"));
 
 	// Hide unused dock slots and vsplits
 	dock_slot[DOCK_SLOT_LEFT_UL]->hide();
