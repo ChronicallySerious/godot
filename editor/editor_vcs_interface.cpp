@@ -98,13 +98,12 @@ void EditorVCSInterface::commit(String p_msg) {
 
 PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {
 
-	PanelContainer *c = reinterpret_cast<PanelContainer *>(&call("_get_initialization_settings_panel_container"));
-	return Object::cast_to<PanelContainer>(c);
+	return Object::cast_to<PanelContainer>(call("_get_initialization_settings_panel_container").operator Control *());
 }
 
 PanelContainer *EditorVCSInterface::get_commit_dock_panel_container() {
 
-	Control *c = Object::cast_to<Control>(call("_get_commit_dock_panel_container").operator Node *());
+	Object *c = call("_get_commit_dock_panel_container").operator Object *();
 	return Object::cast_to<PanelContainer>(c);
 }
 
