@@ -52,7 +52,7 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::get_singleton() {
 
 void VersionControlEditorPlugin::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
-	Size2 popup_size = Size2(450, 300);
+	Size2 popup_size = Size2(100, 100);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
@@ -110,12 +110,6 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 
 void VersionControlEditorPlugin::_send_commit_msg() {
 
-	if (!vcs_interface) {
-
-		ERR_EXPLAIN("No VCS addon found. Set up a VCS addon from Project menu");
-		ERR_FAIL();
-	}
-
 	String msg = commit_message->get_text();
 	if (msg == "") {
 
@@ -164,11 +158,16 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	set_up_ok_button->set_text(TTR("Close"));
 
 	set_up_vbc = memnew(VBoxContainer);
+	set_up_vbc->set_alignment(VBoxContainer::ALIGN_CENTER);
 	set_up_dialog->add_child(set_up_vbc);
 
 	set_up_hbc = memnew(HBoxContainer);
 	set_up_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
 	set_up_vbc->add_child(set_up_hbc);
+
+	set_up_vcs_status = memnew(RichTextLabel);
+	set_up_vcs_status->set_text(TTR("VCS Addon not initialized"));
+	set_up_vbc->add_child(set_up_vcs_status);
 
 	set_up_vcs_label = memnew(Label);
 	set_up_vcs_label->set_text(TTR("Version Control System"));

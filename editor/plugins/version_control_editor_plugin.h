@@ -24,6 +24,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	OptionButton *set_up_choice;
 	PanelContainer *set_up_init_settings;
 	Button *set_up_init_button;
+	RichTextLabel *set_up_vcs_status;
 	Button *set_up_ok_button;
 
 	VBoxContainer *version_commit_dock;

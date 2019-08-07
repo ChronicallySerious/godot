@@ -86,12 +86,22 @@ Dictionary EditorVCSInterface::get_untracked_files_data() {
 
 void EditorVCSInterface::stage_all() {
 
+	if (!get_is_vcs_intialized()) {
+
+		ERR_EXPLAIN("No VCS addon found. Set up a VCS addon from Project menu");
+		ERR_FAIL();
+	}
 	call("_stage_all");
 	return;
 }
 
 void EditorVCSInterface::commit(String p_msg) {
 
+	if (!get_is_vcs_intialized()) {
+
+		ERR_EXPLAIN("No VCS addon found. Set up a VCS addon from Project menu");
+		ERR_FAIL();
+	}
 	call("_commit", p_msg);
 	return;
 }
