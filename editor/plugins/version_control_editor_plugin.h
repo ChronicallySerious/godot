@@ -6,6 +6,7 @@
 #include "scene/gui/container.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/text_edit.h"
+#include "scene/gui/tree.h"
 
 class VersionControlEditorPlugin : public EditorPlugin {
 
@@ -31,6 +32,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	VBoxContainer *commit_box_vbc;
 	HSplitContainer *stage_tools;
 	VBoxContainer *staging_area;
+	Tree *stage_files;
 	Label *staging_area_label;
 	HSplitContainer *stage_buttons;
 	Button *stage_all_button;
@@ -53,6 +55,7 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
 	void _send_commit_msg();
+	void _working_directory_changed();
 
 	friend class EditorVCSInterface;
 

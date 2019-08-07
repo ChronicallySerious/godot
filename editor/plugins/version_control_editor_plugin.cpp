@@ -9,6 +9,7 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_selected_a_vcs"), &VersionControlEditorPlugin::_selected_a_vcs);
 	ClassDB::bind_method(D_METHOD("_initialize_vcs"), &VersionControlEditorPlugin::_initialize_vcs);
 	ClassDB::bind_method(D_METHOD("_send_commit_msg"), &VersionControlEditorPlugin::_send_commit_msg);
+	ClassDB::bind_method(D_METHOD("_working_directory_changed"), &VersionControlEditorPlugin::_working_directory_changed);
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
 }
 
@@ -104,6 +105,7 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 		ERR_EXPLAIN("VCS was not initialized");
 	}
 
+	EditorFileSystem::get_singleton()->connect("filesystem_changed", vcs_interface, "_working_directory_changed");
 	stage_selected_button->connect("pressed", vcs_interface, "stage_selected");
 	stage_all_button->connect("pressed", vcs_interface, "stage_all");
 }
@@ -118,6 +120,11 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 	}
 
 	vcs_interface->commit(msg);
+}
+
+void VersionControlEditorPlugin::_working_directory_changed() {
+
+	WARN_PRINT("Dir was changed");
 }
 
 void VersionControlEditorPlugin::register_editor() {
@@ -211,7 +218,19 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_tools->add_child(refresh_button);
 
 	staging_area = memnew(VBoxContainer);
+	staging_area->set_custom_minimum_size(Size2(100, 300));
+	staging_area->set_v_size_flags(VBoxContainer::SIZE_EXPAND_FILL);
 	version_commit_dock->add_child(staging_area, true);
+
+	stage_files = memnew(Tree);
+	stage_files->set_custom_minimum_size(Size2(100, 300));
+	stage_files->set_columns(1);
+	stage_files->set_column_title(0, TTR("Changed files"));
+	stage_files->set_column_titles_visible(true);
+	TreeItem *root = stage_files->create_item();
+	root->set_text(0, TTR("No Files present in staging area"));
+	root->set_editable(0, false);
+	commit_box_vbc->add_child(stage_files);
 
 	stage_buttons = memnew(HSplitContainer);
 	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
