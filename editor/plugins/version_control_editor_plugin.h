@@ -55,7 +55,9 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
 	void _send_commit_msg();
-	void _working_directory_changed();
+	void _refresh_stage_area();
+	void _stage_selected();
+	void _stage_all();
 
 	friend class EditorVCSInterface;
 

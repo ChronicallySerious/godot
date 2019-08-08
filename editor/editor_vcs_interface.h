@@ -9,6 +9,8 @@ class EditorVCSInterface : public Object {
 
 	GDCLASS(EditorVCSInterface, Object)
 
+	bool is_initialized;
+
 protected:
 	static EditorVCSInterface *singleton;
 
@@ -17,8 +19,9 @@ protected:
 	// Implemented by addons as end points for the proxy functions
 	bool _initialize(String p_project_root_path);
 	bool _get_is_vcs_intialized();
-	Dictionary _get_untracked_files_data();
+	Dictionary _get_modified_files_data();
 	void _stage_all();
+	void _stage_file(String p_file_path);
 	void _commit(String p_msg);
 	Control *_get_initialization_settings_panel_container();
 	Control *_get_commit_dock_panel_container();
@@ -30,11 +33,14 @@ public:
 	static EditorVCSInterface *get_singleton();
 	static void set_singleton(EditorVCSInterface *p_singleton);
 
+	bool check_addon_status();
+
 	// Proxy functions to the editor for use
 	bool initialize(String p_project_root_path);
 	bool get_is_vcs_intialized();
-	Dictionary get_untracked_files_data();
+	Dictionary get_modified_files_data();
 	void stage_all();
+	void stage_file(String p_file_path);
 	void commit(String p_msg);
 	PanelContainer *get_initialization_settings_panel_container();
 	PanelContainer *get_commit_dock_panel_container();
