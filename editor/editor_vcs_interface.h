@@ -20,7 +20,6 @@ protected:
 	bool _initialize(String p_project_root_path);
 	bool _get_is_vcs_intialized();
 	Dictionary _get_modified_files_data();
-	void _stage_all();
 	void _stage_file(String p_file_path);
 	void _commit(String p_msg);
 	Control *_get_initialization_settings_panel_container();
@@ -39,7 +38,6 @@ public:
 	bool initialize(String p_project_root_path);
 	bool get_is_vcs_intialized();
 	Dictionary get_modified_files_data();
-	void stage_all();
 	void stage_file(String p_file_path);
 	void commit(String p_msg);
 	PanelContainer *get_initialization_settings_panel_container();

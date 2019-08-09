@@ -13,11 +13,9 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
 	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
 	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
-	ClassDB::bind_method(D_METHOD("_stage_all"), &EditorVCSInterface::_stage_all);
 	ClassDB::bind_method(D_METHOD("_stage_file", "file_path"), &EditorVCSInterface::_stage_file);
 
 	ClassDB::bind_method(D_METHOD("commit", "msg"), &EditorVCSInterface::commit);
-	ClassDB::bind_method(D_METHOD("stage_all"), &EditorVCSInterface::stage_all);
 }
 
 bool EditorVCSInterface::_initialize(String p_project_root_path) {
@@ -34,11 +32,6 @@ bool EditorVCSInterface::_get_is_vcs_intialized() {
 Dictionary EditorVCSInterface::_get_modified_files_data() {
 
 	return Dictionary();
-}
-
-void EditorVCSInterface::_stage_all() {
-
-	return;
 }
 
 void EditorVCSInterface::_stage_file(String p_file_path) {
@@ -90,15 +83,6 @@ bool EditorVCSInterface::get_is_vcs_intialized() {
 Dictionary EditorVCSInterface::get_modified_files_data() {
 
 	return call("_get_modified_files_data");
-}
-
-void EditorVCSInterface::stage_all() {
-
-	if (check_addon_status())
-	{
-		call("_stage_all");
-	}
-	return;
 }
 
 void EditorVCSInterface::stage_file(String p_file_path) {

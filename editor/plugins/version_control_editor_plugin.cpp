@@ -56,7 +56,7 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::get_singleton() {
 
 void VersionControlEditorPlugin::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
-	Size2 popup_size = Size2(100, 100);
+	Size2 popup_size = Size2(300, 100);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
@@ -68,6 +68,7 @@ void VersionControlEditorPlugin::popup_vcs_set_up_dialog(const Control *p_gui_ba
 
 	_populate_available_vcs_names();
 
+	set_up_dialog->set_custom_minimum_size(Size2(300, 100));
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 }
 
@@ -131,6 +132,7 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 void VersionControlEditorPlugin::_refresh_stage_area() {
 
 	if (EditorVCSInterface::get_singleton()) {
+
 		TreeItem *root = stage_files->get_root();
 		Control *parent_control = stage_files->get_root_parent_control();
 
@@ -138,7 +140,7 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 		String file_path;
 		for (int i = 0; i < modified_file_paths.size(); i++) {
 
-			file_path = modified_file_paths.get_value_at_index(i);
+			file_path = modified_file_paths.get_key_at_index(i);
 			TreeItem *found = stage_files->search_item_text(file_path, 0, true);
 			if (!found) {
 
