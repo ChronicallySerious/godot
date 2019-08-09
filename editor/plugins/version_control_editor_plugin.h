@@ -28,11 +28,27 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	RichTextLabel *set_up_vcs_status;
 	Button *set_up_ok_button;
 
+	enum ChangeType {
+
+		CHANGE_TYPE_NEW = 0,
+		CHANGE_TYPE_MODIFIED = 1,
+		CHANGE_TYPE_RENAMED = 2,
+		CHANGE_TYPE_DELETED = 3,
+		CHANGE_TYPE_TYPECHANGE = 4
+	};
+
+	HashMap<ChangeType, String> change_type_to_string;
+
 	VBoxContainer *version_commit_dock;
 	VBoxContainer *commit_box_vbc;
 	HSplitContainer *stage_tools;
 	VBoxContainer *staging_area;
 	Tree *stage_files;
+	TreeItem *new_files;
+	TreeItem *modified_files;
+	TreeItem *renamed_files;
+	TreeItem *deleted_files;
+	TreeItem *typechange_files;
 	Label *staging_area_label;
 	HSplitContainer *stage_buttons;
 	Button *stage_all_button;

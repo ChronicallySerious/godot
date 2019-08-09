@@ -134,24 +134,31 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 	if (EditorVCSInterface::get_singleton()) {
 
 		TreeItem *root = stage_files->get_root();
-		Control *parent_control = stage_files->get_root_parent_control();
 
 		Dictionary modified_file_paths = EditorVCSInterface::get_singleton()->get_modified_files_data();
 		String file_path;
+		TreeItem *attach = NULL;
 		for (int i = 0; i < modified_file_paths.size(); i++) {
 
 			file_path = modified_file_paths.get_key_at_index(i);
 			TreeItem *found = stage_files->search_item_text(file_path, 0, true);
 			if (!found) {
 
-				TreeItem *new_item = stage_files->create_item();
-				new_item->set_text(0, file_path);
-				new_item->set_editable(0, false);
-				new_item->add_button(0, EditorNode::get_singleton()->get_gui_base()->get_icon("Reload", "EditorIcons"));
-				new_item->set_button_color(0, 0, Color(0.0f, 1.0f, 0.0f, 1.0f));
-			} else {
+				attach = root->get_children();
+				switch ((int)modified_file_paths.get_value_at_index(0)) {
 
-				found->set_button_color(0, 0, Color(1.0f, 0.0f, 0.0f, 1.0f));
+					case CHANGE_TYPE_NEW:        attach = attach; break;
+					case CHANGE_TYPE_MODIFIED:   attach = attach->get_next(); break;
+					case CHANGE_TYPE_RENAMED:    attach = attach->get_next()->get_next(); break;
+					case CHANGE_TYPE_DELETED:    attach = attach->get_next()->get_next()->get_next(); break;
+					case CHANGE_TYPE_TYPECHANGE: attach = attach->get_next()->get_next()->get_next()->get_next(); break;
+					default: WARN_PRINT("Invalid file change type");
+				}
+
+				TreeItem *new_item = stage_files->create_item(attach);
+				new_item->set_cell_mode(0, TreeItem::CELL_MODE_CHECK);
+				new_item->set_text(0, file_path);
+				new_item->set_editable(0, true);
 			}
 		}
 	}
@@ -291,13 +298,32 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files = memnew(Tree);
 	stage_files->set_custom_minimum_size(Size2(100, 300));
 	stage_files->set_columns(1);
-	stage_files->set_column_title(0, TTR("Modified Files"));
+	stage_files->set_column_title(0, TTR("Changes"));
 	stage_files->set_column_titles_visible(true);
 	stage_files->set_allow_reselect(true);
 	stage_files->set_allow_rmb_select(true);
 	stage_files->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 	stage_files->set_edit_checkbox_cell_only_when_checkbox_is_pressed(true);
 	commit_box_vbc->add_child(stage_files);
+
+	change_type_to_string[CHANGE_TYPE_NEW] = "New";
+	change_type_to_string[CHANGE_TYPE_MODIFIED] = "Modified";
+	change_type_to_string[CHANGE_TYPE_RENAMED] = "Renamed";
+	change_type_to_string[CHANGE_TYPE_DELETED] = "Deleted";
+	change_type_to_string[CHANGE_TYPE_TYPECHANGE] = "Typechange";
+
+	TreeItem *root = stage_files->create_item();
+	stage_files->set_hide_root(true);
+	new_files = stage_files->create_item();
+	new_files->set_text(0, change_type_to_string[CHANGE_TYPE_NEW]);
+	modified_files = stage_files->create_item(root);
+	modified_files->set_text(0, change_type_to_string[CHANGE_TYPE_MODIFIED]);
+	renamed_files = stage_files->create_item(root);
+	renamed_files->set_text(0, change_type_to_string[CHANGE_TYPE_RENAMED]);
+	deleted_files = stage_files->create_item(root);
+	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_DELETED]);
+	typechange_files = stage_files->create_item(root);
+	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_TYPECHANGE]);
 
 	stage_buttons = memnew(HSplitContainer);
 	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
