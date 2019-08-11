@@ -147,10 +147,10 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				attach = root->get_children();
 				switch ((int)modified_file_paths.get_value_at_index(0)) {
 
-					case CHANGE_TYPE_NEW:        attach = attach; break;
-					case CHANGE_TYPE_MODIFIED:   attach = attach->get_next(); break;
-					case CHANGE_TYPE_RENAMED:    attach = attach->get_next()->get_next(); break;
-					case CHANGE_TYPE_DELETED:    attach = attach->get_next()->get_next()->get_next(); break;
+					case CHANGE_TYPE_NEW: attach = attach; break;
+					case CHANGE_TYPE_MODIFIED: attach = attach->get_next(); break;
+					case CHANGE_TYPE_RENAMED: attach = attach->get_next()->get_next(); break;
+					case CHANGE_TYPE_DELETED: attach = attach->get_next()->get_next()->get_next(); break;
 					case CHANGE_TYPE_TYPECHANGE: attach = attach->get_next()->get_next()->get_next()->get_next(); break;
 					default: WARN_PRINT("Invalid file change type");
 				}
@@ -161,6 +161,9 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				new_item->set_editable(0, true);
 			}
 		}
+	} else {
+
+		WARN_PRINT("No VCS addon is initialized. Select a Version Control Addon from Project menu.")
 	}
 }
 
