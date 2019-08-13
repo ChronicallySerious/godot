@@ -12,6 +12,17 @@ class VersionControlEditorPlugin : public EditorPlugin {
 
 	GDCLASS(VersionControlEditorPlugin, EditorPlugin)
 
+public:
+	enum ChangeType {
+
+		CHANGE_TYPE_NEW = 0,
+		CHANGE_TYPE_MODIFIED = 1,
+		CHANGE_TYPE_RENAMED = 2,
+		CHANGE_TYPE_DELETED = 3,
+		CHANGE_TYPE_TYPECHANGE = 4
+	};
+
+private:
 	static VersionControlEditorPlugin *singleton;
 	EditorVCSInterface *vcs_interface;
 
@@ -27,15 +38,6 @@ class VersionControlEditorPlugin : public EditorPlugin {
 	Button *set_up_init_button;
 	RichTextLabel *set_up_vcs_status;
 	Button *set_up_ok_button;
-
-	enum ChangeType {
-
-		CHANGE_TYPE_NEW = 0,
-		CHANGE_TYPE_MODIFIED = 1,
-		CHANGE_TYPE_RENAMED = 2,
-		CHANGE_TYPE_DELETED = 3,
-		CHANGE_TYPE_TYPECHANGE = 4
-	};
 
 	HashMap<ChangeType, String> change_type_to_string;
 
@@ -100,5 +102,7 @@ public:
 	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();
 };
+
+VARIANT_ENUM_CAST(VersionControlEditorPlugin::ChangeType);
 
 #endif // !VERSION_CONTROL_EDITOR_PLUGIN_H

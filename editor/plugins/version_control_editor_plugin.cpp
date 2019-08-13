@@ -14,6 +14,13 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_stage_all"), &VersionControlEditorPlugin::_stage_all);
 	ClassDB::bind_method(D_METHOD("_stage_selected"), &VersionControlEditorPlugin::_stage_selected);
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
+
+	// Used to track the status of files in the staging area
+	BIND_ENUM_CONSTANT(CHANGE_TYPE_NEW);
+	BIND_ENUM_CONSTANT(CHANGE_TYPE_MODIFIED);
+	BIND_ENUM_CONSTANT(CHANGE_TYPE_RENAMED);
+	BIND_ENUM_CONSTANT(CHANGE_TYPE_DELETED);
+	BIND_ENUM_CONSTANT(CHANGE_TYPE_TYPECHANGE);
 }
 
 void VersionControlEditorPlugin::_selected_a_vcs(int p_id) {
@@ -158,6 +165,7 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				TreeItem *new_item = stage_files->create_item(attach);
 				new_item->set_cell_mode(0, TreeItem::CELL_MODE_CHECK);
 				new_item->set_text(0, file_path);
+				new_item->set_checked(0, true);
 				new_item->set_editable(0, true);
 			}
 		}
@@ -175,10 +183,29 @@ void VersionControlEditorPlugin::_stage_selected() {
 		return;
 	}
 
-	TreeItem *selected_file = NULL;
-	while (selected_file = stage_files->get_selected()) {
+	TreeItem *root = stage_files->get_root();
+	if (root) {
 
-		EditorVCSInterface::get_singleton()->stage_file(selected_file->get_text(0));
+		TreeItem *change_type = root->get_children();
+		while (change_type) {
+
+			TreeItem *file_entry = change_type->get_children();
+			while (file_entry) {
+
+				if (file_entry->is_checked(0)) {
+
+					EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
+					file_entry->set_custom_bg_color(0, Color(0.0f, 1.0f, 0.0f));
+				} else {
+
+					// Remove index
+				}
+
+				file_entry = file_entry->get_next();
+			}
+
+			change_type = change_type->get_next();
+		}
 	}
 }
 
@@ -191,13 +218,21 @@ void VersionControlEditorPlugin::_stage_all() {
 	}
 
 	TreeItem *root = stage_files->get_root();
-
 	if (root) {
 
-		TreeItem *file_entry = NULL;
-		while (file_entry = root->get_next()) {
+		TreeItem *change_type = root->get_children();
+		while (change_type) {
 
-			EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
+			TreeItem *file_entry = change_type->get_children();
+			while (file_entry) {
+
+				EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
+				file_entry->set_custom_bg_color(0, Color(0.0f, 1.0f, 0.0f));
+
+				file_entry = file_entry->get_next();
+			}
+
+			change_type = change_type->get_next();
 		}
 	}
 }
@@ -309,24 +344,29 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files->set_edit_checkbox_cell_only_when_checkbox_is_pressed(true);
 	commit_box_vbc->add_child(stage_files);
 
-	change_type_to_string[CHANGE_TYPE_NEW] = "New";
-	change_type_to_string[CHANGE_TYPE_MODIFIED] = "Modified";
-	change_type_to_string[CHANGE_TYPE_RENAMED] = "Renamed";
-	change_type_to_string[CHANGE_TYPE_DELETED] = "Deleted";
-	change_type_to_string[CHANGE_TYPE_TYPECHANGE] = "Typechange";
+	change_type_to_string[CHANGE_TYPE_NEW] = TTR("New");
+	change_type_to_string[CHANGE_TYPE_MODIFIED] = TTR("Modified");
+	change_type_to_string[CHANGE_TYPE_RENAMED] = TTR("Renamed");
+	change_type_to_string[CHANGE_TYPE_DELETED] = TTR("Deleted");
+	change_type_to_string[CHANGE_TYPE_TYPECHANGE] = TTR("Typechange");
 
 	TreeItem *root = stage_files->create_item();
 	stage_files->set_hide_root(true);
+
 	new_files = stage_files->create_item();
 	new_files->set_text(0, change_type_to_string[CHANGE_TYPE_NEW]);
+
 	modified_files = stage_files->create_item(root);
 	modified_files->set_text(0, change_type_to_string[CHANGE_TYPE_MODIFIED]);
+
 	renamed_files = stage_files->create_item(root);
 	renamed_files->set_text(0, change_type_to_string[CHANGE_TYPE_RENAMED]);
+
 	deleted_files = stage_files->create_item(root);
 	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_DELETED]);
+
 	typechange_files = stage_files->create_item(root);
-	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_TYPECHANGE]);
+	typechange_files->set_text(0, change_type_to_string[CHANGE_TYPE_TYPECHANGE]);
 
 	stage_buttons = memnew(HSplitContainer);
 	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
