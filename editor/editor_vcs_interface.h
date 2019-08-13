@@ -1,8 +1,8 @@
 #ifndef EDITOR_VCS_INTERFACE_H
 #define EDITOR_VCS_INTERFACE_H
 
-#include "core/ustring.h"
 #include "core/object.h"
+#include "core/ustring.h"
 #include "scene/gui/panel_container.h"
 
 class EditorVCSInterface : public Object {
@@ -21,6 +21,7 @@ protected:
 	bool _get_is_vcs_intialized();
 	Dictionary _get_modified_files_data();
 	void _stage_file(String p_file_path);
+	void _unstage_file(String p_file_path); 
 	void _commit(String p_msg);
 	Control *_get_initialization_settings_panel_container();
 	Control *_get_commit_dock_panel_container();
@@ -39,6 +40,7 @@ public:
 	bool get_is_vcs_intialized();
 	Dictionary get_modified_files_data();
 	void stage_file(String p_file_path);
+	void unstage_file(String p_file_path);
 	void commit(String p_msg);
 	PanelContainer *get_initialization_settings_panel_container();
 	PanelContainer *get_commit_dock_panel_container();

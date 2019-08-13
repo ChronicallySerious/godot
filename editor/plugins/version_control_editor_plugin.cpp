@@ -195,10 +195,11 @@ void VersionControlEditorPlugin::_stage_selected() {
 				if (file_entry->is_checked(0)) {
 
 					EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
-					file_entry->set_custom_bg_color(0, Color(0.0f, 1.0f, 0.0f));
+					file_entry->set_icon_color(0, Color(0.0f, 1.0f, 0.0f));
 				} else {
 
-					// Remove index
+					EditorVCSInterface::get_singleton()->unstage_file(file_entry->get_text(0));
+					file_entry->set_icon_color(0, Color(0.5f, 0.5f, 0.5f));
 				}
 
 				file_entry = file_entry->get_next();

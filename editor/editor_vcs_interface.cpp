@@ -14,6 +14,7 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
 	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
 	ClassDB::bind_method(D_METHOD("_stage_file", "file_path"), &EditorVCSInterface::_stage_file);
+	ClassDB::bind_method(D_METHOD("_unstage_file", "file_path"), &EditorVCSInterface::_unstage_file);
 
 	ClassDB::bind_method(D_METHOD("commit", "msg"), &EditorVCSInterface::commit);
 }
@@ -35,6 +36,11 @@ Dictionary EditorVCSInterface::_get_modified_files_data() {
 }
 
 void EditorVCSInterface::_stage_file(String p_file_path) {
+
+	return;
+}
+
+void EditorVCSInterface::_unstage_file(String p_file_path) {
 
 	return;
 }
@@ -90,6 +96,15 @@ void EditorVCSInterface::stage_file(String p_file_path) {
 	if (check_addon_status())
 	{
 		call("_stage_file", p_file_path);
+	}
+	return;
+}
+
+void EditorVCSInterface::unstage_file(String p_file_path) {
+
+	if (check_addon_status()) {
+
+		call("_unstage_file", p_file_path);
 	}
 	return;
 }
