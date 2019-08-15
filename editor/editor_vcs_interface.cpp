@@ -13,6 +13,7 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
 	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
 	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
+	ClassDB::bind_method(D_METHOD("_get_file_diff", "file_path"), &EditorVCSInterface::_get_file_diff);
 	ClassDB::bind_method(D_METHOD("_stage_file", "file_path"), &EditorVCSInterface::_stage_file);
 	ClassDB::bind_method(D_METHOD("_unstage_file", "file_path"), &EditorVCSInterface::_unstage_file);
 
@@ -48,6 +49,11 @@ void EditorVCSInterface::_unstage_file(String p_file_path) {
 void EditorVCSInterface::_commit(String p_msg) {
 
 	return;
+}
+
+Array EditorVCSInterface::_get_file_diff(String p_file_path) {
+
+	return Array();
 }
 
 Control *EditorVCSInterface::_get_commit_dock_panel_container() {
@@ -93,7 +99,7 @@ Dictionary EditorVCSInterface::get_modified_files_data() {
 
 void EditorVCSInterface::stage_file(String p_file_path) {
 
-	if (check_addon_status())
+	if (is_addon_ready())
 	{
 		call("_stage_file", p_file_path);
 	}
@@ -102,25 +108,34 @@ void EditorVCSInterface::stage_file(String p_file_path) {
 
 void EditorVCSInterface::unstage_file(String p_file_path) {
 
-	if (check_addon_status()) {
+	if (is_addon_ready()) {
 
 		call("_unstage_file", p_file_path);
 	}
 	return;
 }
 
-bool EditorVCSInterface::check_addon_status() {
+bool EditorVCSInterface::is_addon_ready() {
 
 	return is_initialized;
 }
 
 void EditorVCSInterface::commit(String p_msg) {
 
-	if (check_addon_status())
+	if (is_addon_ready())
 	{
 		call("_commit", p_msg);
 	}
 	return;
+}
+
+Array EditorVCSInterface::get_file_diff(String p_file_path) {
+
+	if (is_addon_ready()) {
+
+		return call("_get_file_diff", p_file_path);
+	}
+	return Array();
 }
 
 PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {

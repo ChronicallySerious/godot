@@ -60,15 +60,13 @@ private:
 	Button *commit_button;
 
 	PanelContainer *version_control_dock;
-	ToolButton *tool_button;
-	HSplitContainer *diff_viewer;
-	VBoxContainer *left_pane;
-	Label *left_pane_heading;
-	RichTextLabel *left_diff;
-	VBoxContainer *right_pane;
-	Label *right_pane_heading;
-	RichTextLabel *right_diff;
-
+	ToolButton *version_control_dock_button;
+	VBoxContainer *diff_vbc;
+	HBoxContainer *diff_hbc;
+	Label *diff_file_name;
+	Label *diff_heading;
+	RichTextLabel *diff;
+	
 	void _populate_available_vcs_names();
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
@@ -76,6 +74,7 @@ private:
 	void _refresh_stage_area();
 	void _stage_selected();
 	void _stage_all();
+	void _view_file_diff();
 
 	friend class EditorVCSInterface;
 
@@ -86,18 +85,19 @@ public:
 	static VersionControlEditorPlugin *get_singleton();
 
 	void popup_vcs_set_up_dialog(const Control *p_gui_base);
-	void set_tool_button(ToolButton *p_button) { tool_button = p_button; }
+	void set_tool_button(ToolButton *p_button) { version_control_dock_button = p_button; }
 
 	PopupMenu *get_version_control_actions_panel() const { return version_control_actions; }
 	VBoxContainer *get_version_commit_dock() const { return version_commit_dock; }
 	PanelContainer *get_version_control_dock() const { return version_control_dock; }
 
-	void register_editor();
-	void fetch_available_vcs_addon_names();
-
 	List<StringName> get_available_vcs_names() const { return available_addons; }
 	const bool get_is_vcs_intialized() const;
 	const String get_vcs_name() const;
+
+	void register_editor();
+	void fetch_available_vcs_addon_names();
+	void clear_stage_area();
 
 	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();

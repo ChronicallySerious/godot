@@ -13,6 +13,7 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_refresh_stage_area"), &VersionControlEditorPlugin::_refresh_stage_area);
 	ClassDB::bind_method(D_METHOD("_stage_all"), &VersionControlEditorPlugin::_stage_all);
 	ClassDB::bind_method(D_METHOD("_stage_selected"), &VersionControlEditorPlugin::_stage_selected);
+	ClassDB::bind_method(D_METHOD("_view_file_diff"), &VersionControlEditorPlugin::_view_file_diff);
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
 
 	// Used to track the status of files in the staging area
@@ -63,7 +64,7 @@ VersionControlEditorPlugin *VersionControlEditorPlugin::get_singleton() {
 
 void VersionControlEditorPlugin::popup_vcs_set_up_dialog(const Control *p_gui_base) {
 
-	Size2 popup_size = Size2(300, 100);
+	Size2 popup_size = Size2(400, 100);
 	Size2 window_size = p_gui_base->get_viewport_rect().size;
 	popup_size.x = MIN(window_size.x * 0.5, popup_size.x);
 	popup_size.y = MIN(window_size.y * 0.5, popup_size.y);
@@ -75,7 +76,7 @@ void VersionControlEditorPlugin::popup_vcs_set_up_dialog(const Control *p_gui_ba
 
 	_populate_available_vcs_names();
 
-	set_up_dialog->set_custom_minimum_size(Size2(300, 100));
+	set_up_dialog->set_custom_minimum_size(Size2(400, 100));
 	set_up_dialog->popup_centered_clamped(popup_size * EDSCALE);
 }
 
@@ -116,6 +117,8 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 
 		ERR_EXPLAIN("VCS was not initialized");
 	}
+
+	_refresh_stage_area();
 }
 
 void VersionControlEditorPlugin::_send_commit_msg() {
@@ -130,15 +133,22 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 	if (EditorVCSInterface::get_singleton()) {
 
 		EditorVCSInterface::get_singleton()->commit(msg);
+
+		commit_message->set_text("");
+		version_control_dock_button->set_pressed(false);
 	} else {
 
 		WARN_PRINT("No VCS addon is initialized. Select a Version Control Addon from Project menu");
 	}
+
+	_refresh_stage_area();
 }
 
 void VersionControlEditorPlugin::_refresh_stage_area() {
 
 	if (EditorVCSInterface::get_singleton()) {
+
+		clear_stage_area();
 
 		TreeItem *root = stage_files->get_root();
 
@@ -152,12 +162,12 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 			if (!found) {
 
 				attach = root->get_children();
-				switch ((int)modified_file_paths.get_value_at_index(0)) {
+				switch ((int)modified_file_paths.get_value_at_index(i)) {
 
-					case CHANGE_TYPE_NEW: attach = attach; break;
-					case CHANGE_TYPE_MODIFIED: attach = attach->get_next(); break;
-					case CHANGE_TYPE_RENAMED: attach = attach->get_next()->get_next(); break;
-					case CHANGE_TYPE_DELETED: attach = attach->get_next()->get_next()->get_next(); break;
+					case CHANGE_TYPE_NEW:        attach = attach; break;
+					case CHANGE_TYPE_MODIFIED:   attach = attach->get_next(); break;
+					case CHANGE_TYPE_RENAMED:    attach = attach->get_next()->get_next(); break;
+					case CHANGE_TYPE_DELETED:    attach = attach->get_next()->get_next()->get_next(); break;
 					case CHANGE_TYPE_TYPECHANGE: attach = attach->get_next()->get_next()->get_next()->get_next(); break;
 					default: WARN_PRINT("Invalid file change type");
 				}
@@ -238,6 +248,39 @@ void VersionControlEditorPlugin::_stage_all() {
 	}
 }
 
+void VersionControlEditorPlugin::_view_file_diff() {
+
+	version_control_dock_button->set_pressed(true);
+
+	String file_path = stage_files->get_selected()->get_text(0);
+	Array diff_content = EditorVCSInterface::get_singleton()->get_file_diff(file_path);
+
+	diff_file_name->set_text("Viewing diff for: " + file_path);
+
+	diff->clear();
+	diff->push_font(EditorNode::get_singleton()->get_gui_base()->get_font("source", "EditorFonts"));
+	for (int i = 0; i < diff_content.size(); i++) {
+
+		Dictionary line_result = diff_content[i];
+
+		if (line_result["status"] == "+") {
+
+			diff->push_color(EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+		} else if (line_result["status"] == "-") {
+
+			diff->push_color(EditorNode::get_singleton()->get_gui_base()->get_color("error_color", "Editor"));
+		} else {
+
+			diff->push_color(EditorNode::get_singleton()->get_gui_base()->get_color("font_color", "Label"));
+		}
+
+		diff->add_text((String)line_result["content"]);
+
+		diff->pop();
+	}
+	diff->pop();
+}
+
 void VersionControlEditorPlugin::register_editor() {
 
 	ToolButton *vc = EditorNode::get_singleton()->add_bottom_panel_item(TTR("Version Control"), version_control_dock);
@@ -247,6 +290,19 @@ void VersionControlEditorPlugin::register_editor() {
 void VersionControlEditorPlugin::fetch_available_vcs_addon_names() {
 
 	ScriptServer::get_global_class_list(&available_addons);
+}
+
+void VersionControlEditorPlugin::clear_stage_area() {
+
+	TreeItem *root = stage_files->get_root();
+
+	TreeItem *category = root->get_children();
+	while (category) {
+
+		category->clear_children();
+
+		category = category->get_next();
+	}
 }
 
 const bool VersionControlEditorPlugin::get_is_vcs_intialized() const {
@@ -269,6 +325,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	set_up_dialog = memnew(AcceptDialog);
 	set_up_dialog->set_title(TTR("Set Up Version Control"));
+	set_up_dialog->set_custom_minimum_size(Size2(400, 100));
 	version_control_actions->add_child(set_up_dialog);
 
 	set_up_ok_button = set_up_dialog->get_ok();
@@ -343,6 +400,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files->set_allow_rmb_select(true);
 	stage_files->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 	stage_files->set_edit_checkbox_cell_only_when_checkbox_is_pressed(true);
+	stage_files->connect("cell_selected", this, "_view_file_diff");
 	commit_box_vbc->add_child(stage_files);
 
 	change_type_to_string[CHANGE_TYPE_NEW] = TTR("New");
@@ -355,18 +413,23 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files->set_hide_root(true);
 
 	new_files = stage_files->create_item();
+	new_files->set_selectable(0, false);
 	new_files->set_text(0, change_type_to_string[CHANGE_TYPE_NEW]);
 
 	modified_files = stage_files->create_item(root);
+	modified_files->set_selectable(0, false);
 	modified_files->set_text(0, change_type_to_string[CHANGE_TYPE_MODIFIED]);
 
 	renamed_files = stage_files->create_item(root);
+	renamed_files->set_selectable(0, false);
 	renamed_files->set_text(0, change_type_to_string[CHANGE_TYPE_RENAMED]);
 
 	deleted_files = stage_files->create_item(root);
+	deleted_files->set_selectable(0, false);
 	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_DELETED]);
 
 	typechange_files = stage_files->create_item(root);
+	typechange_files->set_selectable(0, false);
 	typechange_files->set_text(0, change_type_to_string[CHANGE_TYPE_TYPECHANGE]);
 
 	stage_buttons = memnew(HSplitContainer);
@@ -403,33 +466,30 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	version_control_dock->hide();
 
-	diff_viewer = memnew(HSplitContainer);
-	version_control_dock->add_child(diff_viewer);
+	diff_vbc = memnew(VBoxContainer);
+	diff_vbc->set_custom_minimum_size(Size2(300, 250));
+	diff_vbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	version_control_dock->add_child(diff_vbc);
 
-	left_pane = memnew(VBoxContainer);
-	left_pane->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	diff_viewer->add_child(left_pane);
+	diff_hbc = memnew(HBoxContainer);
+	diff_hbc->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
+	diff_vbc->add_child(diff_hbc);
 
-	left_pane_heading = memnew(Label);
-	left_pane_heading->set_text(TTR("Last Commit"));
-	left_pane->add_child(left_pane_heading);
+	diff_heading = memnew(Label);
+	diff_heading->set_text(TTR("Status"));
+	diff_heading->set_tooltip(TTR("View file diffs before commiting them to the latest version"));
+	diff_hbc->add_child(diff_heading);
 
-	left_diff = memnew(RichTextLabel);
-	left_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
-	left_pane->add_child(left_diff);
+	diff_file_name = memnew(Label);
+	diff_file_name->set_text("No file diff is active");
+	diff_file_name->set_h_size_flags(Label::SIZE_EXPAND_FILL);
+	diff_file_name->set_align(Label::ALIGN_RIGHT);
+	diff_hbc->add_child(diff_file_name);
 
-	right_pane = memnew(VBoxContainer);
-	right_pane->set_alignment(BoxContainer::AlignMode::ALIGN_BEGIN);
-	right_pane->set_h_size_flags(HBoxContainer::SIZE_EXPAND_FILL);
-	diff_viewer->add_child(right_pane);
-
-	right_pane_heading = memnew(Label);
-	right_pane_heading->set_text(TTR("Changes"));
-	right_pane->add_child(right_pane_heading);
-
-	right_diff = memnew(RichTextLabel);
-	right_diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
-	right_pane->add_child(right_diff);
+	diff = memnew(RichTextLabel);
+	diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);
+	diff->set_selection_enabled(true);
+	diff_vbc->add_child(diff);
 }
 
 VersionControlEditorPlugin::~VersionControlEditorPlugin() {
