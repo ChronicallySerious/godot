@@ -126,11 +126,17 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 	String msg = commit_message->get_text();
 	if (msg == "") {
 
-		ERR_EXPLAIN("No commit message provided");
-		ERR_FAIL();
+		commit_status->set_text(TTR("No commit message was provided"));
+		return;
 	}
 
 	if (EditorVCSInterface::get_singleton()) {
+
+		if (staged_files_count == 0) {
+
+			commit_status->set_text(TTR("No files added to stage"));
+			return;
+		}
 
 		EditorVCSInterface::get_singleton()->commit(msg);
 
@@ -142,6 +148,8 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 	}
 
 	_refresh_stage_area();
+	_refresh_file_diff();
+	_update_commit_status();
 }
 
 void VersionControlEditorPlugin::_refresh_stage_area() {
@@ -149,7 +157,7 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 	if (EditorVCSInterface::get_singleton()) {
 
 		clear_stage_area();
-
+		commit_status->set_text("");
 		TreeItem *root = stage_files->get_root();
 
 		Dictionary modified_file_paths = EditorVCSInterface::get_singleton()->get_modified_files_data();
@@ -178,6 +186,7 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				new_item->set_checked(0, true);
 				new_item->set_editable(0, true);
 			}
+			commit_status->set_text("New changes detected");
 		}
 	} else {
 
@@ -205,11 +214,13 @@ void VersionControlEditorPlugin::_stage_selected() {
 				if (file_entry->is_checked(0)) {
 
 					EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
-					file_entry->set_icon_color(0, Color(0.0f, 1.0f, 0.0f));
+					file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+					staged_files_count++;
 				} else {
 
 					EditorVCSInterface::get_singleton()->unstage_file(file_entry->get_text(0));
-					file_entry->set_icon_color(0, Color(0.5f, 0.5f, 0.5f));
+					file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("error_color", "Editor"));
+					staged_files_count--;
 				}
 
 				file_entry = file_entry->get_next();
@@ -218,6 +229,8 @@ void VersionControlEditorPlugin::_stage_selected() {
 			change_type = change_type->get_next();
 		}
 	}
+
+	_update_stage_status();
 }
 
 void VersionControlEditorPlugin::_stage_all() {
@@ -238,7 +251,8 @@ void VersionControlEditorPlugin::_stage_all() {
 			while (file_entry) {
 
 				EditorVCSInterface::get_singleton()->stage_file(file_entry->get_text(0));
-				file_entry->set_custom_bg_color(0, Color(0.0f, 1.0f, 0.0f));
+				file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+				staged_files_count++;
 
 				file_entry = file_entry->get_next();
 			}
@@ -246,6 +260,8 @@ void VersionControlEditorPlugin::_stage_all() {
 			change_type = change_type->get_next();
 		}
 	}
+
+	_update_stage_status();
 }
 
 void VersionControlEditorPlugin::_view_file_diff() {
@@ -279,6 +295,40 @@ void VersionControlEditorPlugin::_view_file_diff() {
 		diff->pop();
 	}
 	diff->pop();
+}
+
+void VersionControlEditorPlugin::_refresh_file_diff() {
+
+	diff->clear();
+	diff_file_name->set_text(TTR("No file diff is active"));
+	version_control_dock_button->set_pressed(false);
+}
+
+void VersionControlEditorPlugin::_update_stage_status() {
+
+	String status;
+	if (staged_files_count == 1) {
+
+		status = "Stage contains 1 file";
+	} else {
+
+		status = "Stage contains " + String::num_int64(staged_files_count) + " files";
+	}
+	commit_status->set_text(status);
+}
+
+void VersionControlEditorPlugin::_update_commit_status() {
+
+	String status;
+	if (staged_files_count == 1) {
+
+		status = "Committed 1 file";
+	} else {
+
+		status = "Committed " + String::num_int64(staged_files_count) + " files ";
+	}
+	commit_status->set_text(status);
+	staged_files_count = 0;
 }
 
 void VersionControlEditorPlugin::register_editor() {
@@ -319,6 +369,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	singleton = this;
 	vcs_interface = NULL;
+	staged_files_count = 0;
 
 	version_control_actions = memnew(PopupMenu);
 	version_control_actions->set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
@@ -403,34 +454,34 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files->connect("cell_selected", this, "_view_file_diff");
 	commit_box_vbc->add_child(stage_files);
 
-	change_type_to_string[CHANGE_TYPE_NEW] = TTR("New");
-	change_type_to_string[CHANGE_TYPE_MODIFIED] = TTR("Modified");
-	change_type_to_string[CHANGE_TYPE_RENAMED] = TTR("Renamed");
-	change_type_to_string[CHANGE_TYPE_DELETED] = TTR("Deleted");
-	change_type_to_string[CHANGE_TYPE_TYPECHANGE] = TTR("Typechange");
+	change_type_as_strings[CHANGE_TYPE_NEW] = TTR("New");
+	change_type_as_strings[CHANGE_TYPE_MODIFIED] = TTR("Modified");
+	change_type_as_strings[CHANGE_TYPE_RENAMED] = TTR("Renamed");
+	change_type_as_strings[CHANGE_TYPE_DELETED] = TTR("Deleted");
+	change_type_as_strings[CHANGE_TYPE_TYPECHANGE] = TTR("Typechange");
 
 	TreeItem *root = stage_files->create_item();
 	stage_files->set_hide_root(true);
 
 	new_files = stage_files->create_item();
 	new_files->set_selectable(0, false);
-	new_files->set_text(0, change_type_to_string[CHANGE_TYPE_NEW]);
+	new_files->set_text(0, change_type_as_strings[CHANGE_TYPE_NEW]);
 
 	modified_files = stage_files->create_item(root);
 	modified_files->set_selectable(0, false);
-	modified_files->set_text(0, change_type_to_string[CHANGE_TYPE_MODIFIED]);
+	modified_files->set_text(0, change_type_as_strings[CHANGE_TYPE_MODIFIED]);
 
 	renamed_files = stage_files->create_item(root);
 	renamed_files->set_selectable(0, false);
-	renamed_files->set_text(0, change_type_to_string[CHANGE_TYPE_RENAMED]);
+	renamed_files->set_text(0, change_type_as_strings[CHANGE_TYPE_RENAMED]);
 
 	deleted_files = stage_files->create_item(root);
 	deleted_files->set_selectable(0, false);
-	deleted_files->set_text(0, change_type_to_string[CHANGE_TYPE_DELETED]);
+	deleted_files->set_text(0, change_type_as_strings[CHANGE_TYPE_DELETED]);
 
 	typechange_files = stage_files->create_item(root);
 	typechange_files->set_selectable(0, false);
-	typechange_files->set_text(0, change_type_to_string[CHANGE_TYPE_TYPECHANGE]);
+	typechange_files->set_text(0, change_type_as_strings[CHANGE_TYPE_TYPECHANGE]);
 
 	stage_buttons = memnew(HSplitContainer);
 	stage_buttons->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN_COLLAPSED);
@@ -462,6 +513,10 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	commit_button->connect("pressed", this, "_send_commit_msg");
 	commit_box_vbc->add_child(commit_button);
 
+	commit_status = memnew(Label);
+	commit_status->set_align(Label::ALIGN_CENTER);
+	commit_box_vbc->add_child(commit_status);
+
 	version_control_dock = memnew(PanelContainer);
 	version_control_dock->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	version_control_dock->hide();
@@ -481,7 +536,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	diff_hbc->add_child(diff_heading);
 
 	diff_file_name = memnew(Label);
-	diff_file_name->set_text("No file diff is active");
+	diff_file_name->set_text(TTR("No file diff is active"));
 	diff_file_name->set_h_size_flags(Label::SIZE_EXPAND_FILL);
 	diff_file_name->set_align(Label::ALIGN_RIGHT);
 	diff_hbc->add_child(diff_file_name);

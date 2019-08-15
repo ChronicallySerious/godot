@@ -26,6 +26,7 @@ private:
 	static VersionControlEditorPlugin *singleton;
 	EditorVCSInterface *vcs_interface;
 
+	int staged_files_count;
 	List<StringName> available_addons;
 
 	PopupMenu *version_control_actions;
@@ -39,7 +40,7 @@ private:
 	RichTextLabel *set_up_vcs_status;
 	Button *set_up_ok_button;
 
-	HashMap<ChangeType, String> change_type_to_string;
+	HashMap<ChangeType, String> change_type_as_strings;
 
 	VBoxContainer *version_commit_dock;
 	VBoxContainer *commit_box_vbc;
@@ -58,6 +59,7 @@ private:
 	Button *refresh_button;
 	TextEdit *commit_message;
 	Button *commit_button;
+	Label *commit_status;
 
 	PanelContainer *version_control_dock;
 	ToolButton *version_control_dock_button;
@@ -75,6 +77,9 @@ private:
 	void _stage_selected();
 	void _stage_all();
 	void _view_file_diff();
+	void _refresh_file_diff();
+	void _update_stage_status();
+	void _update_commit_status();
 
 	friend class EditorVCSInterface;
 
