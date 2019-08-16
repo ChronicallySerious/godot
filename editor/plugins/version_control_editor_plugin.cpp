@@ -14,6 +14,7 @@ void VersionControlEditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_stage_all"), &VersionControlEditorPlugin::_stage_all);
 	ClassDB::bind_method(D_METHOD("_stage_selected"), &VersionControlEditorPlugin::_stage_selected);
 	ClassDB::bind_method(D_METHOD("_view_file_diff"), &VersionControlEditorPlugin::_view_file_diff);
+	ClassDB::bind_method(D_METHOD("_refresh_file_diff"), &VersionControlEditorPlugin::_refresh_file_diff);
 	ClassDB::bind_method(D_METHOD("popup_vcs_set_up_dialog"), &VersionControlEditorPlugin::popup_vcs_set_up_dialog);
 
 	// Used to track the status of files in the staging area
@@ -148,7 +149,7 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 	}
 
 	_refresh_stage_area();
-	_refresh_file_diff();
+	_clear_file_diff();
 	_update_commit_status();
 }
 
@@ -185,6 +186,12 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				new_item->set_text(0, file_path);
 				new_item->set_checked(0, true);
 				new_item->set_editable(0, true);
+			} else {
+
+				if (found->get_text(0) == diff_file_name->get_text()) {
+
+					_refresh_file_diff();
+				}
 			}
 			commit_status->set_text("New changes detected");
 		}
@@ -269,9 +276,15 @@ void VersionControlEditorPlugin::_view_file_diff() {
 	version_control_dock_button->set_pressed(true);
 
 	String file_path = stage_files->get_selected()->get_text(0);
-	Array diff_content = EditorVCSInterface::get_singleton()->get_file_diff(file_path);
 
-	diff_file_name->set_text("Viewing diff for: " + file_path);
+	_display_file_diff(file_path);
+}
+
+void VersionControlEditorPlugin::_display_file_diff(String p_file_path) {
+
+	Array diff_content = EditorVCSInterface::get_singleton()->get_file_diff(p_file_path);
+
+	diff_file_name->set_text(p_file_path);
 
 	diff->clear();
 	diff->push_font(EditorNode::get_singleton()->get_gui_base()->get_font("source", "EditorFonts"));
@@ -299,8 +312,18 @@ void VersionControlEditorPlugin::_view_file_diff() {
 
 void VersionControlEditorPlugin::_refresh_file_diff() {
 
+	String open_file = diff_file_name->get_text();
+	if (open_file != "") {
+
+		_display_file_diff(diff_file_name->get_text());
+	}
+}
+
+void VersionControlEditorPlugin::_clear_file_diff() {
+
 	diff->clear();
-	diff_file_name->set_text(TTR("No file diff is active"));
+	diff_file_name->set_text("");
+	
 	version_control_dock_button->set_pressed(false);
 }
 
@@ -540,6 +563,12 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	diff_file_name->set_h_size_flags(Label::SIZE_EXPAND_FILL);
 	diff_file_name->set_align(Label::ALIGN_RIGHT);
 	diff_hbc->add_child(diff_file_name);
+
+	diff_refresh_button = memnew(Button);
+	diff_refresh_button->set_tooltip(TTR("Detect changes in file diff"));
+	diff_refresh_button->set_icon(EditorNode::get_singleton()->get_gui_base()->get_icon("Reload", "EditorIcons"));
+	diff_refresh_button->connect("pressed", this, "_refresh_file_diff");
+	diff_hbc->add_child(diff_refresh_button);
 
 	diff = memnew(RichTextLabel);
 	diff->set_v_size_flags(TextEdit::SIZE_EXPAND_FILL);

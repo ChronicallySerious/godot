@@ -65,6 +65,7 @@ private:
 	ToolButton *version_control_dock_button;
 	VBoxContainer *diff_vbc;
 	HBoxContainer *diff_hbc;
+	Button *diff_refresh_button;
 	Label *diff_file_name;
 	Label *diff_heading;
 	RichTextLabel *diff;
@@ -77,7 +78,9 @@ private:
 	void _stage_selected();
 	void _stage_all();
 	void _view_file_diff();
+	void _display_file_diff(String p_file_path);
 	void _refresh_file_diff();
+	void _clear_file_diff();
 	void _update_stage_status();
 	void _update_commit_status();
 
