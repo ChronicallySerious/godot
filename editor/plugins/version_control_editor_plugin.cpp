@@ -148,17 +148,17 @@ void VersionControlEditorPlugin::_send_commit_msg() {
 		WARN_PRINT("No VCS addon is initialized. Select a Version Control Addon from Project menu");
 	}
 
+	_update_commit_status();
 	_refresh_stage_area();
 	_clear_file_diff();
-	_update_commit_status();
 }
 
 void VersionControlEditorPlugin::_refresh_stage_area() {
 
 	if (EditorVCSInterface::get_singleton()) {
 
+		staged_files_count = 0;
 		clear_stage_area();
-		commit_status->set_text("");
 		TreeItem *root = stage_files->get_root();
 
 		Dictionary modified_file_paths = EditorVCSInterface::get_singleton()->get_modified_files_data();
@@ -209,6 +209,7 @@ void VersionControlEditorPlugin::_stage_selected() {
 		return;
 	}
 
+	staged_files_count = 0;
 	TreeItem *root = stage_files->get_root();
 	if (root) {
 
@@ -227,7 +228,6 @@ void VersionControlEditorPlugin::_stage_selected() {
 
 					EditorVCSInterface::get_singleton()->unstage_file(file_entry->get_text(0));
 					file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("error_color", "Editor"));
-					staged_files_count--;
 				}
 
 				file_entry = file_entry->get_next();
@@ -248,6 +248,7 @@ void VersionControlEditorPlugin::_stage_all() {
 		return;
 	}
 
+	staged_files_count = 0;
 	TreeItem *root = stage_files->get_root();
 	if (root) {
 
