@@ -179,6 +179,7 @@ private:
 		RUN_DEPLOY_REMOTE_DEBUG,
 		RUN_RELOAD_SCRIPTS,
 		RUN_VCS_SETTINGS,
+		RUN_VCS_SHUT_DOWN,
 		SETTINGS_UPDATE_CONTINUOUSLY,
 		SETTINGS_UPDATE_WHEN_CHANGED,
 		SETTINGS_UPDATE_ALWAYS,
@@ -298,7 +299,6 @@ private:
 	SceneTreeDock *scene_tree_dock;
 	InspectorDock *inspector_dock;
 	NodeDock *node_dock;
-	VBoxContainer *version_commit_dock;
 	ImportDock *import_dock;
 	FileSystemDock *filesystem_dock;
 	EditorRunNative *run_native;

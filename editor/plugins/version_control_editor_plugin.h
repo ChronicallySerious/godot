@@ -24,7 +24,9 @@ public:
 
 private:
 	static VersionControlEditorPlugin *singleton;
+
 	EditorVCSInterface *vcs_interface;
+	bool is_registered;
 
 	int staged_files_count;
 	List<StringName> available_addons;
@@ -93,7 +95,7 @@ public:
 	static VersionControlEditorPlugin *get_singleton();
 
 	void popup_vcs_set_up_dialog(const Control *p_gui_base);
-	void set_tool_button(ToolButton *p_button) { version_control_dock_button = p_button; }
+	void set_version_control_tool_button(ToolButton *p_button) { version_control_dock_button = p_button; }
 
 	PopupMenu *get_version_control_actions_panel() const { return version_control_actions; }
 	VBoxContainer *get_version_commit_dock() const { return version_commit_dock; }
@@ -106,6 +108,7 @@ public:
 	void register_editor();
 	void fetch_available_vcs_addon_names();
 	void clear_stage_area();
+	void shut_down();
 
 	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();

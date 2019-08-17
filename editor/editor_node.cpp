@@ -185,6 +185,10 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 
 			VersionControlEditorPlugin::get_singleton()->popup_vcs_set_up_dialog(gui_base);
 		} break;
+		case RUN_VCS_SHUT_DOWN: {
+
+			VersionControlEditorPlugin::get_singleton()->shut_down();
+		} break;
 	}
 }
 
@@ -6036,6 +6040,7 @@ EditorNode::EditorNode() {
 	p->add_child(vcs_actions_menu);
 	p->add_submenu_item(TTR("Version Control"), "Version Control");
 	vcs_actions_menu->add_item(TTR("Set Up Version Control"), RUN_VCS_SETTINGS);
+	vcs_actions_menu->add_item(TTR("Shut Down Version Control"), RUN_VCS_SHUT_DOWN);
 
 	tool_menu = memnew(PopupMenu);
 	tool_menu->set_name("Tools");
@@ -6285,7 +6290,6 @@ EditorNode::EditorNode() {
 	inspector_dock = memnew(InspectorDock(this, editor_data));
 	import_dock = memnew(ImportDock);
 	node_dock = memnew(NodeDock);
-	version_commit_dock = VersionControlEditorPlugin::get_singleton()->get_version_commit_dock();
 
 	filesystem_dock = memnew(FileSystemDock(this));
 	filesystem_dock->connect("inherit", this, "_inherit_request");
@@ -6311,10 +6315,6 @@ EditorNode::EditorNode() {
 	// Node: Full height right, behind Inspector
 	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(node_dock);
 	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(node_dock->get_index(), TTR("Node"));
-
-	// Commit: Full height right, behind Node
-	dock_slot[DOCK_SLOT_RIGHT_UL]->add_child(version_commit_dock);
-	dock_slot[DOCK_SLOT_RIGHT_UL]->set_tab_title(version_commit_dock->get_index(), TTR("Commit"));
 
 	// Hide unused dock slots and vsplits
 	dock_slot[DOCK_SLOT_LEFT_UL]->hide();
@@ -6507,8 +6507,7 @@ EditorNode::EditorNode() {
 	raise_bottom_panel_item(AnimationPlayerEditor::singleton);
 
 	add_editor_plugin(VersionControlEditorPlugin::get_singleton());
-	VersionControlEditorPlugin::get_singleton()->register_editor();
-
+	
 	add_editor_plugin(memnew(ShaderEditorPlugin(this)));
 	add_editor_plugin(memnew(VisualShaderEditorPlugin(this)));
 
