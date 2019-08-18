@@ -71,7 +71,7 @@ private:
 	Label *diff_file_name;
 	Label *diff_heading;
 	RichTextLabel *diff;
-	
+
 	void _populate_available_vcs_names();
 	void _selected_a_vcs(int p_id);
 	void _initialize_vcs();
@@ -102,7 +102,7 @@ public:
 	PanelContainer *get_version_control_dock() const { return version_control_dock; }
 
 	List<StringName> get_available_vcs_names() const { return available_addons; }
-	const bool get_is_vcs_intialized() const;
+	bool get_is_vcs_intialized() const;
 	const String get_vcs_name() const;
 
 	void register_editor();

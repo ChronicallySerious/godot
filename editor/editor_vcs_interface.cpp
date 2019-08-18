@@ -87,8 +87,8 @@ Dictionary EditorVCSInterface::get_modified_files_data() {
 
 void EditorVCSInterface::stage_file(String p_file_path) {
 
-	if (is_addon_ready())
-	{
+	if (is_addon_ready()) {
+
 		call("_stage_file", p_file_path);
 	}
 	return;
@@ -110,8 +110,8 @@ bool EditorVCSInterface::is_addon_ready() {
 
 void EditorVCSInterface::commit(String p_msg) {
 
-	if (is_addon_ready())
-	{
+	if (is_addon_ready()) {
+
 		call("_commit", p_msg);
 	}
 	return;

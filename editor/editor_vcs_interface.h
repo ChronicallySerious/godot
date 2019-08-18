@@ -21,7 +21,7 @@ protected:
 	bool _get_is_vcs_intialized();
 	Dictionary _get_modified_files_data();
 	void _stage_file(String p_file_path);
-	void _unstage_file(String p_file_path); 
+	void _unstage_file(String p_file_path);
 	void _commit(String p_msg);
 	Array _get_file_diff(String p_file_path);
 	bool _shut_down();

@@ -175,10 +175,10 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 				attach = root->get_children();
 				switch ((int)modified_file_paths.get_value_at_index(i)) {
 
-					case CHANGE_TYPE_NEW:        attach = attach; break;
-					case CHANGE_TYPE_MODIFIED:   attach = attach->get_next(); break;
-					case CHANGE_TYPE_RENAMED:    attach = attach->get_next()->get_next(); break;
-					case CHANGE_TYPE_DELETED:    attach = attach->get_next()->get_next()->get_next(); break;
+					case CHANGE_TYPE_NEW: attach = attach; break;
+					case CHANGE_TYPE_MODIFIED: attach = attach->get_next(); break;
+					case CHANGE_TYPE_RENAMED: attach = attach->get_next()->get_next(); break;
+					case CHANGE_TYPE_DELETED: attach = attach->get_next()->get_next()->get_next(); break;
 					case CHANGE_TYPE_TYPECHANGE: attach = attach->get_next()->get_next()->get_next()->get_next(); break;
 					default: WARN_PRINT("Invalid file change type");
 				}
@@ -326,7 +326,6 @@ void VersionControlEditorPlugin::_clear_file_diff() {
 
 	diff->clear();
 	diff_file_name->set_text("");
-	
 	version_control_dock_button->set_pressed(false);
 }
 
@@ -401,7 +400,7 @@ void VersionControlEditorPlugin::shut_down() {
 	}
 }
 
-const bool VersionControlEditorPlugin::get_is_vcs_intialized() const {
+bool VersionControlEditorPlugin::get_is_vcs_intialized() const {
 
 	return vcs_interface ? vcs_interface->get_is_vcs_intialized() : false;
 }
