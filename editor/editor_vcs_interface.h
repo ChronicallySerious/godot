@@ -24,8 +24,6 @@ protected:
 	void _unstage_file(String p_file_path); 
 	void _commit(String p_msg);
 	Array _get_file_diff(String p_file_path);
-	Control *_get_initialization_settings_panel_container();
-	Control *_get_commit_dock_panel_container();
 	bool _shut_down();
 	String _get_project_name();
 	String _get_vcs_name();
@@ -44,8 +42,6 @@ public:
 	void unstage_file(String p_file_path);
 	void commit(String p_msg);
 	Array get_file_diff(String p_file_path);
-	PanelContainer *get_initialization_settings_panel_container();
-	PanelContainer *get_commit_dock_panel_container();
 	bool shut_down();
 	String get_project_name();
 	String get_vcs_name();

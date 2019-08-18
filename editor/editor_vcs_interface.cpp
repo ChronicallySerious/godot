@@ -10,8 +10,6 @@ void EditorVCSInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_shut_down"), &EditorVCSInterface::_shut_down);
 	ClassDB::bind_method(D_METHOD("_get_project_name"), &EditorVCSInterface::_get_project_name);
 	ClassDB::bind_method(D_METHOD("_get_modified_files_data"), &EditorVCSInterface::_get_modified_files_data);
-	ClassDB::bind_method(D_METHOD("_get_initialization_settings_panel_container"), &EditorVCSInterface::_get_initialization_settings_panel_container);
-	ClassDB::bind_method(D_METHOD("_get_commit_dock_panel_container"), &EditorVCSInterface::_get_commit_dock_panel_container);
 	ClassDB::bind_method(D_METHOD("_commit", "msg"), &EditorVCSInterface::_commit);
 	ClassDB::bind_method(D_METHOD("_get_file_diff", "file_path"), &EditorVCSInterface::_get_file_diff);
 	ClassDB::bind_method(D_METHOD("_stage_file", "file_path"), &EditorVCSInterface::_stage_file);
@@ -56,11 +54,6 @@ Array EditorVCSInterface::_get_file_diff(String p_file_path) {
 	return Array();
 }
 
-Control *EditorVCSInterface::_get_commit_dock_panel_container() {
-
-	return NULL;
-}
-
 bool EditorVCSInterface::_shut_down() {
 
 	return false;
@@ -74,11 +67,6 @@ String EditorVCSInterface::_get_project_name() {
 String EditorVCSInterface::_get_vcs_name() {
 
 	return "";
-}
-
-Control *EditorVCSInterface::_get_initialization_settings_panel_container() {
-
-	return NULL;
 }
 
 bool EditorVCSInterface::initialize(String p_project_root_path) {
@@ -136,17 +124,6 @@ Array EditorVCSInterface::get_file_diff(String p_file_path) {
 		return call("_get_file_diff", p_file_path);
 	}
 	return Array();
-}
-
-PanelContainer *EditorVCSInterface::get_initialization_settings_panel_container() {
-
-	return Object::cast_to<PanelContainer>(call("_get_initialization_settings_panel_container").operator Control *());
-}
-
-PanelContainer *EditorVCSInterface::get_commit_dock_panel_container() {
-
-	Object *c = call("_get_commit_dock_panel_container").operator Object *();
-	return Object::cast_to<PanelContainer>(c);
 }
 
 bool EditorVCSInterface::shut_down() {
