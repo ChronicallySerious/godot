@@ -25,9 +25,6 @@ public:
 private:
 	static VersionControlEditorPlugin *singleton;
 
-	EditorVCSInterface *vcs_interface;
-	bool is_registered;
-
 	int staged_files_count;
 	List<StringName> available_addons;
 

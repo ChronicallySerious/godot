@@ -85,9 +85,9 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 
 	register_editor();
 
-	if (vcs_interface) {
+	if (EditorVCSInterface::get_singleton()) {
 
-		ERR_EXPLAIN(vcs_interface->get_vcs_name() + " is already active");
+		ERR_EXPLAIN(EditorVCSInterface::get_singleton()->get_vcs_name() + " is already active");
 		return;
 	}
 
@@ -101,7 +101,7 @@ void VersionControlEditorPlugin::_initialize_vcs() {
 		ERR_EXPLAIN("VCS Addon path is invalid");
 	}
 
-	vcs_interface = memnew(EditorVCSInterface);
+	EditorVCSInterface *vcs_interface = memnew(EditorVCSInterface);
 	ScriptInstance *addon_script_instance = script->instance_create(vcs_interface);
 	if (!addon_script_instance) {
 
@@ -205,7 +205,7 @@ void VersionControlEditorPlugin::_refresh_stage_area() {
 
 void VersionControlEditorPlugin::_stage_selected() {
 
-	if (!vcs_interface) {
+	if (!EditorVCSInterface::get_singleton()) {
 
 		WARN_PRINT("No VCS addon is initialized. Select a Version Control Addon from Project menu");
 		return;
@@ -244,7 +244,7 @@ void VersionControlEditorPlugin::_stage_selected() {
 
 void VersionControlEditorPlugin::_stage_all() {
 
-	if (!vcs_interface) {
+	if (!EditorVCSInterface::get_singleton()) {
 
 		WARN_PRINT("No VCS addon is initialized. Select a Version Control Addon from Project menu");
 		return;
@@ -358,9 +358,7 @@ void VersionControlEditorPlugin::_update_commit_status() {
 
 void VersionControlEditorPlugin::register_editor() {
 
-	if (!is_registered) {
-
-		is_registered = true;
+	if (!EditorVCSInterface::get_singleton()) {
 
 		EditorNode::get_singleton()->add_control_to_dock(EditorNode::DOCK_SLOT_RIGHT_UL, version_commit_dock);
 		TabContainer *dock_vbc = (TabContainer *)version_commit_dock->get_parent_control();
@@ -391,10 +389,13 @@ void VersionControlEditorPlugin::clear_stage_area() {
 
 void VersionControlEditorPlugin::shut_down() {
 
-	if (is_registered) {
+	if (EditorVCSInterface::get_singleton()) {
 
+		EditorFileSystem::get_singleton()->disconnect("filesystem_changed", this, "_refresh_stage_area");
 		EditorVCSInterface::get_singleton()->shut_down();
 		memdelete(EditorVCSInterface::get_singleton());
+		EditorVCSInterface::set_singleton(NULL);
+
 		EditorNode::get_singleton()->remove_control_from_dock(version_commit_dock);
 		EditorNode::get_singleton()->remove_bottom_panel_item(version_control_dock);
 	}
@@ -402,20 +403,18 @@ void VersionControlEditorPlugin::shut_down() {
 
 bool VersionControlEditorPlugin::get_is_vcs_intialized() const {
 
-	return vcs_interface ? vcs_interface->get_is_vcs_intialized() : false;
+	return EditorVCSInterface::get_singleton() ? EditorVCSInterface::get_singleton()->get_is_vcs_intialized() : false;
 }
 
 const String VersionControlEditorPlugin::get_vcs_name() const {
 
-	return vcs_interface ? vcs_interface->get_vcs_name() : "";
+	return EditorVCSInterface::get_singleton() ? EditorVCSInterface::get_singleton()->get_vcs_name() : "";
 }
 
 VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	singleton = this;
-	vcs_interface = NULL;
 	staged_files_count = 0;
-	is_registered = false;
 
 	version_control_actions = memnew(PopupMenu);
 	version_control_actions->set_v_size_flags(BoxContainer::SIZE_SHRINK_CENTER);
