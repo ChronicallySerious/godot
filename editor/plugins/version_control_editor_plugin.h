@@ -44,7 +44,6 @@ private:
 	VBoxContainer *version_commit_dock;
 	VBoxContainer *commit_box_vbc;
 	HSplitContainer *stage_tools;
-	VBoxContainer *staging_area;
 	Tree *stage_files;
 	TreeItem *new_files;
 	TreeItem *modified_files;
