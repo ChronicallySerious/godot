@@ -39,7 +39,8 @@ private:
 	RichTextLabel *set_up_vcs_status;
 	Button *set_up_ok_button;
 
-	HashMap<ChangeType, String> change_type_as_strings;
+	HashMap<ChangeType, String> change_type_to_strings;
+	HashMap<ChangeType, Color> change_type_to_color;
 
 	VBoxContainer *version_commit_dock;
 	VBoxContainer *commit_box_vbc;
