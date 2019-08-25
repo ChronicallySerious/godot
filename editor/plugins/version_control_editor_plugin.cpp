@@ -244,6 +244,7 @@ void VersionControlEditorPlugin::_stage_all() {
 
 			EditorVCSInterface::get_singleton()->stage_file(file_entry->get_metadata(0));
 			file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+			file_entry->set_checked(0, true);
 			staged_files_count++;
 
 			file_entry = file_entry->get_next();
