@@ -212,12 +212,12 @@ void VersionControlEditorPlugin::_stage_selected() {
 			if (file_entry->is_checked(0)) {
 
 				EditorVCSInterface::get_singleton()->stage_file(file_entry->get_metadata(0));
-				file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+				file_entry->set_icon_modulate(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
 				staged_files_count++;
 			} else {
 
 				EditorVCSInterface::get_singleton()->unstage_file(file_entry->get_metadata(0));
-				file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("error_color", "Editor"));
+				file_entry->set_icon_modulate(0, EditorNode::get_singleton()->get_gui_base()->get_color("error_color", "Editor"));
 			}
 
 			file_entry = file_entry->get_next();
@@ -243,7 +243,7 @@ void VersionControlEditorPlugin::_stage_all() {
 		while (file_entry) {
 
 			EditorVCSInterface::get_singleton()->stage_file(file_entry->get_metadata(0));
-			file_entry->set_icon_color(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
+			file_entry->set_icon_modulate(0, EditorNode::get_singleton()->get_gui_base()->get_color("success_color", "Editor"));
 			file_entry->set_checked(0, true);
 			staged_files_count++;
 
@@ -468,7 +468,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	stage_files->set_select_mode(Tree::SelectMode::SELECT_MULTI);
 	stage_files->set_edit_checkbox_cell_only_when_checkbox_is_pressed(true);
 	stage_files->connect("cell_selected", this, "_view_file_diff");
-	TreeItem *root = stage_files->create_item();
+	stage_files->create_item();
 	stage_files->set_hide_root(true);
 	commit_box_vbc->add_child(stage_files);
 
