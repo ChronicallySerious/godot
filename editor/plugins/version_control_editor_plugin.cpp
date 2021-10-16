@@ -1177,6 +1177,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	unstaged_files->set_h_size_flags(Tree::SIZE_EXPAND_FILL);
 	unstaged_files->set_v_size_flags(Tree::SIZE_EXPAND_FILL);
 	unstaged_files->set_select_mode(Tree::SELECT_ROW);
+	unstaged_files->set_allow_reselect(true);
 	unstaged_files->connect("item_selected", this, "_load_diff", varray(unstaged_files));
 	unstaged_files->connect("item_activated", this, "_item_activated", varray(unstaged_files));
 	unstaged_files->connect("button_pressed", this, "_cell_button_pressed");
@@ -1207,6 +1208,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	staged_files->set_h_size_flags(Tree::SIZE_EXPAND_FILL);
 	staged_files->set_v_size_flags(Tree::SIZE_EXPAND_FILL);
 	staged_files->set_select_mode(Tree::SELECT_ROW);
+	staged_files->set_allow_reselect(true);
 	staged_files->connect("item_selected", this, "_load_diff", varray(staged_files));
 	staged_files->connect("button_pressed", this, "_cell_button_pressed");
 	staged_files->connect("item_activated", this, "_item_activated", varray(staged_files));
@@ -1273,6 +1275,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	commit_list->set_custom_minimum_size(Size2(200, 160));
 	commit_list->create_item();
 	commit_list->set_hide_root(true);
+	commit_list->set_allow_reselect(true);
 	commit_list->set_select_mode(Tree::SELECT_ROW);
 	commit_list->set_columns(3); // Commit msg, id, author
 	commit_list->set_column_min_width(0, 40);
